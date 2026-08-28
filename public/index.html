@@ -339,18 +339,23 @@
         <!-- 4 PAPER-CLIP PINNED 3D CARDS GRID -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
           
-          <!-- CARD 1: 24 FPS EXTRACTOR -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <!-- CARD 1: 24 FPS EXTRACTOR (CINEMA CLAPPERBOARD) -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[290px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
+
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-3.5 right-6 w-10 h-14 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block"></canvas>
+            </div>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">24 FPS Frame Extractor</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Multi-threaded video parsing for 8-second clips.</p>
             </div>
 
-            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <!-- 3D PROCEDURAL CINEMA CLAPPERBOARD (img2threejs) -->
             <div class="my-2 flex items-center justify-center h-28 relative">
-              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
+              <canvas id="canvas-clapperboard" class="w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
@@ -359,18 +364,23 @@
             </div>
           </div>
 
-          <!-- CARD 2: AI BACKGROUND MATTING -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <!-- CARD 2: AI BACKGROUND MATTING (PURPLE SCISSORS) -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[290px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
+
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-3.5 right-6 w-10 h-14 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block"></canvas>
+            </div>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">4-Stage AI Matting</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Sub-pixel alpha edge smoothing preserving fine hair.</p>
             </div>
 
-            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <!-- 3D PROCEDURAL PURPLE SCISSORS (img2threejs) -->
             <div class="my-2 flex items-center justify-center h-28 relative">
-              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
+              <canvas id="canvas-scissors" class="w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
@@ -379,18 +389,23 @@
             </div>
           </div>
 
-          <!-- CARD 3: SMART PDF DIGITIZER -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <!-- CARD 3: SMART PDF DIGITIZER (CURLED PAPER SHEET) -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[290px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
+
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-3.5 right-6 w-10 h-14 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block"></canvas>
+            </div>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Smart PDF Digitizer</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Document contrast filters & drag-and-drop ordering.</p>
             </div>
 
-            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <!-- 3D PROCEDURAL CURLED PAPER SHEET (img2threejs) -->
             <div class="my-2 flex items-center justify-center h-28 relative">
-              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
+              <canvas id="canvas-curled-paper" class="w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
@@ -399,18 +414,23 @@
             </div>
           </div>
 
-          <!-- CARD 4: PROCEDURAL THREE.JS CODE (img2threejs) -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <!-- CARD 4: PROCEDURAL THREE.JS CODE (RED RUBY DICE) -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[290px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
+
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-3.5 right-6 w-10 h-14 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block"></canvas>
+            </div>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Procedural 3D Code</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Three.js models in pure code with zero GLB asset bloat.</p>
             </div>
 
-            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <!-- 3D PROCEDURAL RED RUBY DICE (img2threejs) -->
             <div class="my-2 flex items-center justify-center h-28 relative">
-              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
+              <canvas id="canvas-red-dice" class="w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
