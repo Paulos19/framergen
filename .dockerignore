@@ -2,7 +2,10 @@ node_modules
 npm-debug.log
 .git
 .gitignore
-.env
+.agents
+.claude
 storage
 *.mp4
 *.zip
+*.log
+.env
