@@ -27,6 +27,7 @@
               amber: '#f59e0b',
               orange: '#ea580c',
               indigo: '#6366f1',
+              blue: '#2563eb',
               sky: '#eaf4fd',
             }
           },
@@ -45,7 +46,6 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* Custom Styling & Refinements */
     body {
       background-color: #fbf9f5;
       color: #0f172a;
@@ -57,42 +57,74 @@
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Canvas Stacking */
-    #hero-frames-canvas {
+    /* 3D Card Styling & Shines */
+    .card-3d-tilt {
+      position: relative;
+      transition: transform 0.15s ease-out, box-shadow 0.3s ease;
       will-change: transform;
+    }
+
+    .card-shine {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      z-index: 10;
+      transition: background 0.2s ease;
+    }
+
+    /* Realistic Paperclip Pin */
+    .paperclip-pin {
+      position: absolute;
+      top: -14px;
+      right: 28px;
+      width: 24px;
+      height: 38px;
+      z-index: 20;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+      pointer-events: none;
+    }
+
+    /* Subtle Floating Keyframes for Mascot */
+    @keyframes mascot-float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1.5deg); }
+    }
+    .animate-mascot-float {
+      animation: mascot-float 4s ease-in-out infinite;
     }
   </style>
 </head>
 <body class="antialiased selection:bg-amber-500 selection:text-white font-sans">
 
   <!-- ========================================================================= -->
-  <!-- FLOATING PILL NAVBAR WITH INTERACTIVE THREE.JS 3D LOGO -->
+  <!-- 1. FLOATING PILL NAVBAR WITH EXPANDED WIDTH & 3D THREE.JS LOGO -->
   <!-- ========================================================================= -->
-  <header class="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
-    <nav id="floating-navbar" class="pill-navbar pointer-events-auto bg-white/90 backdrop-blur-md px-5 py-2.5 rounded-full shadow-lg shadow-black/5 border border-white/60 flex items-center justify-between gap-6 sm:gap-10 max-w-2xl w-full">
+  <header class="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 sm:px-8 pointer-events-none">
+    <nav id="floating-navbar" class="pill-navbar pointer-events-auto bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-xl shadow-black/5 border border-white/60 flex items-center justify-between gap-6 sm:gap-10 max-w-5xl w-full">
       
       <!-- 3D THREE.JS LOGO & BRAND -->
-      <a href="#" class="flex items-center gap-2.5 group">
-        <div class="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center overflow-hidden shadow-sm transition-transform group-hover:scale-110">
+      <a href="#" class="flex items-center gap-3 group shrink-0">
+        <div class="w-8 h-8 rounded-full bg-slate-950 flex items-center justify-center overflow-hidden shadow-sm transition-transform group-hover:scale-110">
           <canvas id="logo-three-canvas" class="w-8 h-8 block pointer-events-none"></canvas>
         </div>
-        <span class="font-bold text-base tracking-tight text-slate-900">FramerTool</span>
+        <span class="font-bold text-base sm:text-lg tracking-tight text-slate-950 font-sans">FramerTool</span>
       </a>
 
       <!-- NAVIGATION LINKS -->
-      <div class="hidden md:flex items-center gap-7 text-xs font-semibold text-slate-600">
-        <a href="#hero" class="hover:text-slate-900 transition-colors">Home</a>
-        <a href="#features" class="hover:text-slate-900 transition-colors">Features</a>
-        <a href="/studio.html" class="hover:text-slate-900 transition-colors">Extractor</a>
-        <a href="/studio.html" class="hover:text-slate-900 transition-colors">AI Matting</a>
-        <a href="/studio.html" class="hover:text-slate-900 transition-colors">PDF Scanner</a>
+      <div class="hidden lg:flex items-center gap-8 text-xs sm:text-sm font-medium text-slate-600">
+        <a href="#hero" class="hover:text-slate-950 transition-colors">Home</a>
+        <a href="#overview" class="hover:text-slate-950 transition-colors">Overview</a>
+        <a href="#engines" class="hover:text-slate-950 transition-colors">Engines</a>
+        <a href="#modules" class="hover:text-slate-950 transition-colors">Modules</a>
+        <a href="/studio.html" class="hover:text-slate-950 transition-colors">Studio App</a>
       </div>
 
       <!-- RIGHT ACTION BUTTON (LAUNCH STUDIO) -->
-      <div class="flex items-center gap-2">
-        <a href="/studio.html" class="px-5 py-2 rounded-full bg-slate-900 hover:bg-black text-white text-xs font-semibold shadow-sm transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5">
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="/studio.html" class="px-5 py-2.5 rounded-full bg-slate-950 hover:bg-black text-white text-xs sm:text-sm font-semibold shadow-md shadow-slate-900/10 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
           <span>Launch Studio</span>
-          <span class="text-[10px]">&rarr;</span>
+          <span class="text-xs">&rarr;</span>
         </a>
       </div>
 
@@ -101,7 +133,7 @@
 
 
   <!-- ========================================================================= -->
-  <!-- HERO SECTION SCROLLTELLING (240 FRAMES CLEAN CANVAS) -->
+  <!-- 2. HERO SECTION SCROLLTELLING (240 FRAMES CLEAN CANVAS) -->
   <!-- ========================================================================= -->
   <section id="hero-scroll-container" class="relative w-full h-[400vh] bg-[#fbf9f5]">
     
@@ -138,11 +170,11 @@
         <!-- DUAL CTAs -->
         <div class="flex items-center justify-center gap-4">
           <a href="/studio.html" class="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-900 font-semibold text-sm shadow-xl shadow-black/5 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-slate-200/50">
-            <span>Get Started</span>
+            <span>Get Started Free</span>
             <span class="text-base">→</span>
           </a>
           <button onclick="document.getElementById('hero-scroll-indicator').click()" class="px-5 py-3.5 text-slate-900 font-semibold text-sm hover:text-amber-700 transition-colors flex items-center gap-1.5">
-            <span>Watch Demo</span>
+            <span>Watch Demo ▷</span>
           </button>
         </div>
 
@@ -167,7 +199,7 @@
         </p>
 
         <div class="flex items-center justify-center gap-4">
-          <a href="/studio.html" class="px-7 py-3.5 rounded-full bg-slate-900 hover:bg-black text-white font-semibold text-sm shadow-xl hover:scale-105 transition-all flex items-center gap-2">
+          <a href="/studio.html" class="px-7 py-3.5 rounded-full bg-slate-950 hover:bg-black text-white font-semibold text-sm shadow-xl hover:scale-105 transition-all flex items-center gap-2">
             <span>Open Frame Extractor ✦</span>
           </a>
         </div>
@@ -213,94 +245,426 @@
 
 
   <!-- ========================================================================= -->
-  <!-- SECTION 2: SEAMLESS SKY TRANSITION & UNIFIED WORKFLOW CARDS -->
+  <!-- 3. SECTION 2: CREATOR & MASCOT SHOWCASE (INSPIRED BY REFERENCE HEADER) -->
   <!-- ========================================================================= -->
-  <section id="features" class="relative bg-gradient-to-b from-[#eaf4fd] via-[#f7fafc] to-[#fbf9f5] py-28 px-4 sm:px-6 lg:px-8 border-t border-sky-100/50">
-    
-    <div class="max-w-7xl mx-auto">
+  <section id="overview" class="relative bg-gradient-to-b from-[#eaf4fd] via-[#f8fafc] to-[#fbf9f5] py-20 px-4 sm:px-6 lg:px-8 border-t border-sky-100/50">
+    <div class="max-w-6xl mx-auto">
       
-      <!-- SECTION 2 HEADER -->
-      <div class="text-center max-w-3xl mx-auto mb-20">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/20 text-sky-700 text-xs font-semibold uppercase tracking-wider mb-4">
-          ✦ Unified Creative Pipeline
-        </div>
-        <h2 class="text-4xl sm:text-5xl font-extrabold text-slate-950 tracking-tight mb-4">
-          One pipeline. Infinite possibilities.
-        </h2>
-        <p class="text-slate-600 text-base sm:text-lg">
-          Seamlessly pass extracted frames directly into the AI background remover and compile high-contrast PDF documents without switching tools.
-        </p>
-      </div>
-
-      <!-- FEATURE CARDS GRID (ORGANIC MINIMALISM) -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- HERO SHOWCASE CARD -->
+      <div class="bg-white rounded-[2.5rem] p-8 sm:p-12 lg:p-16 shadow-2xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden">
         
-        <!-- CARD 1: 24 FPS VIDEO EXTRACTOR -->
-        <div class="bg-white/85 backdrop-blur-sm p-8 rounded-3xl border border-slate-200/60 shadow-lg shadow-slate-100 hover:shadow-2xl hover:-translate-y-1 transition-all group">
-          <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-            <i data-lucide="film" class="w-6 h-6"></i>
-          </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">24 FPS Frame Extractor</h3>
-          <p class="text-slate-600 text-sm leading-relaxed mb-6">
-            Multi-threaded video parsing optimized for 8-second clips (192/240 frames), real-time scrub playback, and batch ZIP archiving.
-          </p>
-          <a href="/studio.html" class="text-xs font-semibold text-amber-600 hover:text-amber-700 flex items-center gap-1 group-hover:gap-2 transition-all">
-            <span>Launch Extractor</span>
-            <span>&rarr;</span>
-          </a>
-        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          
+          <!-- LEFT COPY & CTAs -->
+          <div class="lg:col-span-7 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-800 text-xs font-semibold uppercase tracking-wider">
+              ✦ Next-Gen Media Engine
+            </div>
 
-        <!-- CARD 2: 4-STAGE AI MATTING -->
-        <div class="bg-white/85 backdrop-blur-sm p-8 rounded-3xl border border-slate-200/60 shadow-lg shadow-slate-100 hover:shadow-2xl hover:-translate-y-1 transition-all group">
-          <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-            <i data-lucide="wand-2" class="w-6 h-6"></i>
-          </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">4-Stage AI Matting</h3>
-          <p class="text-slate-600 text-sm leading-relaxed mb-6">
-            Sub-pixel edge smoothing, morphological hole closure, and light subject recovery with interactive before/after split viewer.
-          </p>
-          <a href="/studio.html" class="text-xs font-semibold text-purple-600 hover:text-purple-700 flex items-center gap-1 group-hover:gap-2 transition-all">
-            <span>Test Background Remover</span>
-            <span>&rarr;</span>
-          </a>
-        </div>
+            <h2 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 tracking-tight leading-[1.1]">
+              AI-Powered Media Creation for Modern Teams
+            </h2>
 
-        <!-- CARD 3: SMART PDF DIGITIZER -->
-        <div class="bg-white/85 backdrop-blur-sm p-8 rounded-3xl border border-slate-200/60 shadow-lg shadow-slate-100 hover:shadow-2xl hover:-translate-y-1 transition-all group">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-            <i data-lucide="file-text" class="w-6 h-6"></i>
+            <p class="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl">
+              Extract 24 FPS sequences from short videos, remove backgrounds with sub-pixel alpha precision, and digitize clean PDF documents in one seamless workspace.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-4 pt-2">
+              <a href="/studio.html" class="px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                <span>Select Workspace</span>
+                <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs">&rarr;</span>
+              </a>
+              <div class="text-xs text-slate-500 font-mono flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>No installation needed • Runs in Browser</span>
+              </div>
+            </div>
           </div>
-          <h3 class="text-xl font-bold text-slate-900 mb-2">Smart PDF Digitizer</h3>
-          <p class="text-slate-600 text-sm leading-relaxed mb-6">
-            Multi-page assembly, intelligent B&W clean-scan filters, drag-and-drop page sorting, and A4/Letter vector PDF export.
-          </p>
-          <a href="/studio.html" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 group-hover:gap-2 transition-all">
-            <span>Digitize to PDF</span>
-            <span>&rarr;</span>
-          </a>
+
+          <!-- RIGHT CREATIVE CARD WITH MASCOT INTEGRATION -->
+          <div class="lg:col-span-5 relative flex justify-center">
+            
+            <!-- CREATIVE PHOTO CONTAINER WITH GREEN ACCENT -->
+            <div class="relative w-full max-w-[340px] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100">
+              
+              <!-- GREEN GRAPHIC ACCENT FLUID RIBBON -->
+              <div class="absolute -top-10 -right-10 w-44 h-44 bg-[#a3e635] rounded-full filter blur-2xl opacity-60 pointer-events-none"></div>
+
+              <!-- PHOTO -->
+              <img src="/assets/frames/frame_0001.jpg" alt="Alpine Landscape" class="w-full h-full object-cover" />
+
+              <!-- FLOATING TOP SPEECH PILL -->
+              <div class="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-lg border border-slate-100 text-xs text-slate-800 leading-snug">
+                <p class="font-semibold text-slate-950">⚡ Instant 24 FPS Extraction</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Parse 240 frames in 1.7s with zero lag.</p>
+              </div>
+
+              <!-- 3D CUTE MASCOT PEEKING OUT -->
+              <div class="absolute -bottom-6 -right-6 w-44 h-44 z-20 animate-mascot-float filter drop-shadow-2xl">
+                <img src="/assets/mascote.png" alt="FramerTool Mascot" class="w-full h-full object-contain" />
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
 
     </div>
-
   </section>
 
 
-  <!-- FOOTER -->
-  <footer class="bg-[#fbf9f5] border-t border-slate-200/60 py-12 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <div class="w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center text-white text-[10px]">✦</div>
-        <span class="font-bold text-slate-900">FramerTool Studio</span>
-        <span>• 24 FPS Frame Extraction, AI Matting & PDF Digitizer</span>
+  <!-- ========================================================================= -->
+  <!-- 4. SECTION 3: VIBRANT BLUE BANNER WITH PAPERCLIP-PINNED 3D CARDS -->
+  <!-- ========================================================================= -->
+  <section id="engines" class="py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto">
+      
+      <!-- BLUE CANVAS CONTAINER (INSPIRED BY REFERENCE IMAGE) -->
+      <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-[3rem] p-8 sm:p-12 lg:p-16 shadow-2xl shadow-blue-500/20 text-white relative overflow-hidden">
+        
+        <!-- HEADER -->
+        <div class="max-w-2xl mb-12">
+          <span class="text-blue-200 text-xs font-bold uppercase tracking-widest block mb-2 font-mono">✦ CORE PIPELINES</span>
+          <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+            Production Engines & Workflows
+          </h2>
+          <p class="text-blue-100/90 text-sm sm:text-base mt-2">
+            Four specialized procedural tools built to turn raw media into production-ready assets.
+          </p>
+        </div>
+
+        <!-- 4 PAPER-CLIP PINNED 3D CARDS GRID -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
+          
+          <!-- CARD 1: 24 FPS EXTRACTOR -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
+            
+            <!-- REALISTIC PAPERCLIP PIN SVG -->
+            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">24 FPS Frame Extractor</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Multi-threaded video parsing for 8-second clips.</p>
+            </div>
+
+            <!-- 3D GRAPHIC ICON & PILL BADGE -->
+            <div class="my-4 flex items-center justify-center">
+              <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                🎬
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">240 frames</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
+          </div>
+
+          <!-- CARD 2: AI BACKGROUND MATTING -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
+            
+            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">4-Stage AI Matting</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Sub-pixel alpha edge smoothing preserving fine hair.</p>
+            </div>
+
+            <div class="my-4 flex items-center justify-center">
+              <div class="w-16 h-16 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                ✂️
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Pure Alpha</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
+          </div>
+
+          <!-- CARD 3: SMART PDF DIGITIZER -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
+            
+            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Smart PDF Digitizer</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Document contrast filters & drag-and-drop ordering.</p>
+            </div>
+
+            <div class="my-4 flex items-center justify-center">
+              <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                📄
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Multi-Page</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
+          </div>
+
+          <!-- CARD 4: PROCEDURAL THREE.JS CODE (img2threejs) -->
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
+            
+            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Procedural 3D Code</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Three.js models in pure code with zero GLB asset bloat.</p>
+            </div>
+
+            <div class="my-4 flex items-center justify-center">
+              <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                🧊
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">img2threejs</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
+          </div>
+
+        </div>
+
       </div>
-      <div class="flex items-center gap-6">
-        <a href="/studio.html" class="hover:text-slate-900 transition-colors">Studio App</a>
-        <a href="#features" class="hover:text-slate-900 transition-colors">Features</a>
-        <a href="#" class="hover:text-slate-900 transition-colors">Privacy</a>
-        <a href="#" class="hover:text-slate-900 transition-colors">Terms</a>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 5. SECTION 4: PRODUCTION MODULES GRID (INSPIRED BY REFERENCE "КУРСЫ") -->
+  <!-- ========================================================================= -->
+  <section id="modules" class="py-20 px-4 sm:px-6 lg:px-8 bg-[#fbf9f5]">
+    <div class="max-w-6xl mx-auto">
+      
+      <!-- SECTION HEADER -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <span class="text-blue-600 text-xs font-bold uppercase tracking-widest block mb-2 font-mono">✦ WORKSPACE SUITE</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
+            Production Modules & Tools
+          </h2>
+        </div>
+
+        <a href="/studio.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-blue-600 transition-colors uppercase tracking-wider">
+          <span>+ Open Full Studio Suite</span>
+        </a>
       </div>
+
+      <!-- 3 RICH PRODUCTION CARDS GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- MODULE CARD 1: 8S FRAME EXTRACTION -->
+        <div class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
+          <div class="card-shine"></div>
+
+          <div>
+            <!-- CARD TOP BANNER WITH BADGES -->
+            <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
+              <img src="/assets/frames/frame_0080.jpg" alt="Frame Extraction Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              
+              <!-- TOP PILLS -->
+              <div class="absolute top-3 left-3 flex items-center gap-1.5">
+                <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">Free</span>
+                <span class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">24 FPS</span>
+              </div>
+              <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-amber-500 text-white font-bold text-[10px]">Hot 🔥</span>
+            </div>
+
+            <!-- TITLE & RATING -->
+            <h3 class="font-bold text-lg text-slate-950 mb-2 leading-snug">
+              8-Second Clip Frame Sequencer
+            </h3>
+            <div class="flex items-center gap-2 text-xs text-slate-500 mb-4">
+              <span class="text-amber-500 font-bold">★ 4.9</span>
+              <span>(1,840+ clips processed)</span>
+            </div>
+
+            <!-- TAGS -->
+            <div class="flex flex-wrap gap-1.5 mb-6">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-mono text-[11px]">#FFmpeg</span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 font-mono text-[11px]">#240Frames</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-mono text-[11px]">#ZIPDownload</span>
+            </div>
+          </div>
+
+          <!-- BOTTOM ROW WITH SPECS & ACTION -->
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="text-xs font-mono">
+              <span class="text-slate-400 block text-[10px]">SPEED</span>
+              <span class="font-bold text-slate-800">1.72s / 192f</span>
+            </div>
+            <a href="/studio.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
+              <span>Open Tool</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- MODULE CARD 2: 4-STAGE AI MATTING -->
+        <div class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
+          <div class="card-shine"></div>
+
+          <div>
+            <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
+              <img src="/assets/frames/frame_0150.jpg" alt="AI Matting Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              
+              <div class="absolute top-3 left-3 flex items-center gap-1.5">
+                <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">AI Neural</span>
+                <span class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">Alpha PNG</span>
+              </div>
+              <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-purple-600 text-white font-bold text-[10px]">Sub-Pixel</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-slate-950 mb-2 leading-snug">
+              Surgical Alpha Edge Matting
+            </h3>
+            <div class="flex items-center gap-2 text-xs text-slate-500 mb-4">
+              <span class="text-amber-500 font-bold">★ 5.0</span>
+              <span>(3,210+ images isolated)</span>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 mb-6">
+              <span class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 font-mono text-[11px]">#MorphologicalClose</span>
+              <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-mono text-[11px]">#HairlinePreserve</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-mono text-[11px]">#SplitView</span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="text-xs font-mono">
+              <span class="text-slate-400 block text-[10px]">ACCURACY</span>
+              <span class="font-bold text-slate-800">4-Stage Filter</span>
+            </div>
+            <a href="/studio.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
+              <span>Open Tool</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- MODULE CARD 3: PDF SCANNER & COMPILER -->
+        <div class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
+          <div class="card-shine"></div>
+
+          <div>
+            <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
+              <img src="/assets/frames/frame_0210.jpg" alt="PDF Scanner Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              
+              <div class="absolute top-3 left-3 flex items-center gap-1.5">
+                <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">Document</span>
+                <span class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">pdf-lib</span>
+              </div>
+              <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-emerald-600 text-white font-bold text-[10px]">Vector Ready</span>
+            </div>
+
+            <h3 class="font-bold text-lg text-slate-950 mb-2 leading-snug">
+              Smart PDF Scanner & Compiler
+            </h3>
+            <div class="flex items-center gap-2 text-xs text-slate-500 mb-4">
+              <span class="text-amber-500 font-bold">★ 4.8</span>
+              <span>(950+ multi-page docs)</span>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 mb-6">
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-mono text-[11px]">#CleanScanB&W</span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 font-mono text-[11px]">#DragAndDrop</span>
+              <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-mono text-[11px]">#A4Letter</span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="text-xs font-mono">
+              <span class="text-slate-400 block text-[10px]">FORMAT</span>
+              <span class="font-bold text-slate-800">A4 • Letter • Fit</span>
+            </div>
+            <a href="/studio.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
+              <span>Open Tool</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 6. SECTION 5: MASCOT INTERACTIVE CALLOUT & TEST TRIGGER -->
+  <!-- ========================================================================= -->
+  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#fbf9f5] to-white border-t border-slate-200/60">
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-slate-200/70 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+      
+      <!-- MASCOT FIGURE -->
+      <div class="w-36 h-36 shrink-0 relative animate-mascot-float">
+        <img src="/assets/mascote.png" alt="FramerTool Mascot" class="w-full h-full object-contain filter drop-shadow-lg" />
+      </div>
+
+      <!-- COPY & BUTTONS -->
+      <div class="flex-1 text-center md:text-left space-y-3">
+        <span class="text-amber-600 font-mono text-xs font-bold uppercase tracking-wider">⚡ Ready to test right now?</span>
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-950">
+          Try the 8-second synthetic test video.
+        </h3>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          See how 192 frames are extracted in under 2 seconds and test our AI background removal and PDF scanner without uploading your own files.
+        </p>
+
+        <div class="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
+          <a href="/studio.html" class="px-6 py-3 rounded-full bg-slate-950 hover:bg-black text-white font-semibold text-xs shadow-lg hover:scale-105 transition-all flex items-center gap-2">
+            <span>Launch Studio Suite</span>
+            <span>&rarr;</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 7. FOOTER -->
+  <!-- ========================================================================= -->
+  <footer class="bg-white border-t border-slate-200/70 py-12 text-xs text-slate-500">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-2.5">
+        <div class="w-6 h-6 rounded-full bg-slate-950 flex items-center justify-center text-white text-[10px]">⚡</div>
+        <span class="font-bold text-slate-950 text-sm">FramerTool Studio</span>
+        <span class="text-slate-400">• High-Speed 24 FPS Media Engine</span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-8 text-slate-600 font-medium">
+        <a href="/studio.html" class="hover:text-slate-950 transition-colors">Studio App</a>
+        <a href="#hero" class="hover:text-slate-950 transition-colors">Hero</a>
+        <a href="#engines" class="hover:text-slate-950 transition-colors">Engines</a>
+        <a href="#modules" class="hover:text-slate-950 transition-colors">Modules</a>
+      </div>
+
+      <div class="text-[11px] font-mono text-slate-400">
+        © 2026 FramerTool. Docker & VPS Ready.
+      </div>
+
     </div>
   </footer>
 
