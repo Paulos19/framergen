@@ -5,9 +5,10 @@ import { LogoThreeScene } from './logoThree.js';
 import { init3DTiltCards } from './card3d.js';
 import { initPipeline3DModels } from './cardModelsThree.js';
 import { initFluidEngine } from './fluidContainer.js';
+import { initNatureLandscapeScene } from './natureSceneThree.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('🌊 [FramerTool Landing Page] Initializing 3D Fluid Container, Droplets, Pins & Models...');
+  console.log('🌊 [FramerTool Landing Page] Initializing 3D Fluid, Models & 3D Nature Ambient Diorama...');
 
   // 1. Initialize 240-frame scroll engine
   const scrollEngine = new HeroScrollTelling();
@@ -24,7 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // 5. Initialize Interactive 3D Tilt Cards
   init3DTiltCards();
 
-  // 6. Navbar scroll effect
+  // 6. Initialize 3D Nature Landscape Diorama (Clouds, Hills, Macro Daisies, Pollen)
+  const natureScene = initNatureLandscapeScene();
+
+  // 7. Navbar scroll effect
   const navbar = document.getElementById('floating-navbar');
   window.addEventListener('scroll', () => {
     if (!navbar) return;
@@ -37,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
-  // 7. Smooth scroll on SCROLL indicator click
+  // 8. Smooth scroll on SCROLL indicator click
   document.getElementById('hero-scroll-indicator')?.addEventListener('click', () => {
     window.scrollTo({
       top: window.innerHeight * 1.2,
@@ -45,3 +49,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
