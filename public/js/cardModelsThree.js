@@ -1,180 +1,136 @@
-// FramerTool - 3D Pipeline Card Models & Top Paperclip Pins (img2threejs methodology)
-// Zero external asset bloat - 100% procedural Three.js geometry, PBR shaders & hover micro-interactions.
+// FramerTool - 3D Pipeline Card Models & Top Paperclip Pins (img2threejs)
+// 100% procedural Three.js geometry, PBR materials & interactive hover physics.
 
 // ============================================================================
-// 1. TOP PAPERCLIP PIN (COMPACT, GLOSSY SKY-BLUE CLIP PINNING THE CARD)
+// 1. COMPACT TOP 3D PAPERCLIP PIN (BLUE PLASTIC GLOSS)
 // ============================================================================
-export function createPaperclipGeometry(tubeRadius = 0.09) {
-  const curvePath = new THREE.CurvePath();
-
-  const p0 = new THREE.Vector3(-0.45, -1.0, 0);
-  const p1 = new THREE.Vector3(-0.45, 0.9, 0);
-  curvePath.add(new THREE.LineCurve3(p0, p1));
-
-  // Top Outer Arc
-  const topCenter = new THREE.Vector3(0, 0.9, 0);
-  const topPoints = [];
-  for (let i = 0; i <= 16; i++) {
-    const theta = Math.PI - (i / 16) * Math.PI;
-    topPoints.push(new THREE.Vector3(
-      topCenter.x + Math.cos(theta) * 0.45,
-      topCenter.y + Math.sin(theta) * 0.45,
-      0.01 * (i / 16)
-    ));
-  }
-  curvePath.add(new THREE.CatmullRomCurve3(topPoints));
-
-  // Right Outer Leg
-  const p2 = new THREE.Vector3(0.45, 0.9, 0.01);
-  const p3 = new THREE.Vector3(0.45, -0.9, 0.02);
-  curvePath.add(new THREE.LineCurve3(p2, p3));
-
-  // Bottom Outer Arc
-  const botCenter = new THREE.Vector3(0.12, -0.9, 0.02);
-  const botPoints = [];
-  for (let i = 0; i <= 16; i++) {
-    const theta = 0 - (i / 16) * Math.PI;
-    botPoints.push(new THREE.Vector3(
-      botCenter.x + Math.cos(theta) * 0.33,
-      botCenter.y + Math.sin(theta) * 0.33,
-      0.02 + 0.01 * (i / 16)
-    ));
-  }
-  curvePath.add(new THREE.CatmullRomCurve3(botPoints));
-
-  // Inner Leg Up
-  const p4 = new THREE.Vector3(-0.21, -0.9, 0.03);
-  const p5 = new THREE.Vector3(-0.21, 0.5, 0.04);
-  curvePath.add(new THREE.LineCurve3(p4, p5));
-
-  // Inner Top Arc
-  const inTopCenter = new THREE.Vector3(-0.02, 0.5, 0.04);
-  const inTopPoints = [];
-  for (let i = 0; i <= 16; i++) {
-    const theta = Math.PI - (i / 16) * Math.PI;
-    inTopPoints.push(new THREE.Vector3(
-      inTopCenter.x + Math.cos(theta) * 0.19,
-      inTopCenter.y + Math.sin(theta) * 0.19,
-      0.04 + 0.01 * (i / 16)
-    ));
-  }
-  curvePath.add(new THREE.CatmullRomCurve3(inTopPoints));
-
-  // Final Short Leg Down
-  const p6 = new THREE.Vector3(0.17, 0.5, 0.05);
-  const p7 = new THREE.Vector3(0.17, -0.35, 0.06);
-  curvePath.add(new THREE.LineCurve3(p6, p7));
-
-  const tubeGeo = new THREE.TubeGeometry(curvePath, 64, tubeRadius, 14, false);
-
-  const capStartGeo = new THREE.SphereGeometry(tubeRadius, 12, 12);
-  capStartGeo.translate(p0.x, p0.y, p0.z);
-
-  const capEndGeo = new THREE.SphereGeometry(tubeRadius, 12, 12);
-  capEndGeo.translate(p7.x, p7.y, p7.z);
-
-  return { tubeGeo, capStartGeo, capEndGeo };
-}
-
 export function createPaperclipMesh(colorHex = 0x0284c7) {
   const group = new THREE.Group();
-  const { tubeGeo, capStartGeo, capEndGeo } = createPaperclipGeometry(0.10);
 
-  const mat = new THREE.MeshPhysicalMaterial({
+  const curvePath = new THREE.CurvePath();
+  const r = 0.08;
+
+  // 1. Left outer leg
+  curvePath.add(new THREE.LineCurve3(new THREE.Vector3(-0.4, -0.9, 0), new THREE.Vector3(-0.4, 0.8, 0)));
+
+  // 2. Top outer arc
+  const topCenter = new THREE.Vector3(0, 0.8, 0);
+  const topPts = [];
+  for (let i = 0; i <= 16; i++) {
+    const a = Math.PI - (i / 16) * Math.PI;
+    topPts.push(new THREE.Vector3(topCenter.x + Math.cos(a) * 0.4, topCenter.y + Math.sin(a) * 0.4, 0.01 * (i / 16)));
+  }
+  curvePath.add(new THREE.CatmullRomCurve3(topPts));
+
+  // 3. Right outer leg
+  curvePath.add(new THREE.LineCurve3(new THREE.Vector3(0.4, 0.8, 0.01), new THREE.Vector3(0.4, -0.8, 0.02)));
+
+  // 4. Bottom outer arc
+  const botCenter = new THREE.Vector3(0.1, -0.8, 0.02);
+  const botPts = [];
+  for (let i = 0; i <= 16; i++) {
+    const a = 0 - (i / 16) * Math.PI;
+    botPts.push(new THREE.Vector3(botCenter.x + Math.cos(a) * 0.3, botCenter.y + Math.sin(a) * 0.3, 0.02 + 0.01 * (i / 16)));
+  }
+  curvePath.add(new THREE.CatmullRomCurve3(botPts));
+
+  // 5. Inner leg up
+  curvePath.add(new THREE.LineCurve3(new THREE.Vector3(-0.2, -0.8, 0.03), new THREE.Vector3(-0.2, 0.45, 0.04)));
+
+  // 6. Top inner arc
+  const inTopCenter = new THREE.Vector3(-0.02, 0.45, 0.04);
+  const inTopPts = [];
+  for (let i = 0; i <= 16; i++) {
+    const a = Math.PI - (i / 16) * Math.PI;
+    inTopPts.push(new THREE.Vector3(inTopCenter.x + Math.cos(a) * 0.18, inTopCenter.y + Math.sin(a) * 0.18, 0.04 + 0.01 * (i / 16)));
+  }
+  curvePath.add(new THREE.CatmullRomCurve3(inTopPts));
+
+  // 7. Final leg down
+  curvePath.add(new THREE.LineCurve3(new THREE.Vector3(0.16, 0.45, 0.05), new THREE.Vector3(0.16, -0.3, 0.06)));
+
+  const tubeGeo = new THREE.TubeGeometry(curvePath, 64, r, 12, false);
+
+  const mat = new THREE.MeshStandardMaterial({
     color: colorHex,
-    roughness: 0.15,
+    roughness: 0.18,
     metalness: 0.1,
-    clearcoat: 0.9,
-    clearcoatRoughness: 0.1,
-    ior: 1.52,
-    sheen: 0.3,
-    sheenColor: new THREE.Color(0x38bdf8),
   });
 
-  group.add(new THREE.Mesh(tubeGeo, mat));
-  group.add(new THREE.Mesh(capStartGeo, mat));
-  group.add(new THREE.Mesh(capEndGeo, mat));
+  const tubeMesh = new THREE.Mesh(tubeGeo, mat);
+  group.add(tubeMesh);
 
-  // Inclinação clássica do clipe prendendo a folha
+  // Rounded end caps
+  const cap1 = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 12), mat);
+  cap1.position.set(-0.4, -0.9, 0);
+  group.add(cap1);
+
+  const cap2 = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 12), mat);
+  cap2.position.set(0.16, -0.3, 0.06);
+  group.add(cap2);
+
   group.rotation.z = -0.35;
+  group.scale.setScalar(1.2);
   return group;
 }
 
 // ============================================================================
-// 2. MODEL 1: 3D CINEMA CLAPPERBOARD (24 FPS FRAME EXTRACTOR)
+// 2. MODEL 1: 3D CINEMA CLAPPERBOARD
 // ============================================================================
 export function createClapperboardModel() {
   const group = new THREE.Group();
 
-  // Striped texture generator for clapper sticks
-  const makeStripedTexture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 256;
-    canvas.height = 64;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#1e293b';
-    ctx.fillRect(0, 0, 256, 64);
+  // Striped texture
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(0, 0, 256, 64);
+  ctx.fillStyle = '#ffffff';
+  for (let x = -64; x < 320; x += 64) {
+    ctx.beginPath();
+    ctx.moveTo(x + 20, 0);
+    ctx.lineTo(x + 50, 0);
+    ctx.lineTo(x + 30, 64);
+    ctx.lineTo(x, 64);
+    ctx.closePath();
+    ctx.fill();
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
 
-    ctx.fillStyle = '#ffffff';
-    for (let x = -64; x < 320; x += 64) {
-      ctx.beginPath();
-      ctx.moveTo(x + 20, 0);
-      ctx.lineTo(x + 50, 0);
-      ctx.lineTo(x + 30, 64);
-      ctx.lineTo(x, 64);
-      ctx.closePath();
-      ctx.fill();
-    }
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.wrapS = THREE.RepeatWrapping;
-    tex.wrapT = THREE.RepeatWrapping;
-    return tex;
-  };
-
-  const stripedTex = makeStripedTexture();
-
-  const boardMat = new THREE.MeshStandardMaterial({
-    color: 0x1e293b,
-    roughness: 0.35,
-    metalness: 0.2,
-  });
-
-  const stripedMat = new THREE.MeshStandardMaterial({
-    map: stripedTex,
-    roughness: 0.25,
-    metalness: 0.1,
-  });
+  const boardMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.35 });
+  const stripedMat = new THREE.MeshStandardMaterial({ map: tex, roughness: 0.25 });
 
   // Base Board
-  const baseGeo = new THREE.BoxGeometry(2.1, 1.3, 0.18);
-  const baseMesh = new THREE.Mesh(baseGeo, boardMat);
+  const baseMesh = new THREE.Mesh(new THREE.BoxGeometry(2.0, 1.3, 0.16), boardMat);
   baseMesh.position.set(0, -0.35, 0);
   group.add(baseMesh);
 
-  // Lower Fixed Stripe Bar
-  const lowerBarGeo = new THREE.BoxGeometry(2.1, 0.32, 0.2);
-  const lowerBarMesh = new THREE.Mesh(lowerBarGeo, stripedMat);
-  lowerBarMesh.position.set(0, 0.42, 0.01);
-  group.add(lowerBarMesh);
+  // Fixed Lower Bar
+  const lowerBar = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.3, 0.18), stripedMat);
+  lowerBar.position.set(0, 0.38, 0.01);
+  group.add(lowerBar);
 
-  // Top Hinged Clapper Stick
+  // Top Hinged Stick
   const topStickGroup = new THREE.Group();
-  topStickGroup.position.set(-1.0, 0.58, 0.02); // Pivot on the left hinge
+  topStickGroup.position.set(-0.95, 0.52, 0.02);
 
-  const topStickGeo = new THREE.BoxGeometry(2.15, 0.32, 0.2);
-  const topStickMesh = new THREE.Mesh(topStickGeo, stripedMat);
-  topStickMesh.position.set(1.05, 0, 0);
+  const topStickMesh = new THREE.Mesh(new THREE.BoxGeometry(2.05, 0.3, 0.18), stripedMat);
+  topStickMesh.position.set(1.0, 0, 0);
   topStickGroup.add(topStickMesh);
 
-  // Metal Hinge Screw
-  const hingeGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.26, 16);
-  const hingeMat = new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9, roughness: 0.2 });
-  const hingeMesh = new THREE.Mesh(hingeGeo, hingeMat);
-  hingeMesh.rotation.x = Math.PI / 2;
-  topStickGroup.add(hingeMesh);
+  // Hinge pin
+  const hinge = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.1, 0.1, 0.22, 16),
+    new THREE.MeshStandardMaterial({ color: 0x94a3b8, metalness: 0.9 })
+  );
+  hinge.rotation.x = Math.PI / 2;
+  topStickGroup.add(hinge);
 
-  // Initial Open Angle
-  topStickGroup.rotation.z = 0.38; // ~22 degrees open
+  topStickGroup.rotation.z = 0.35;
   group.add(topStickGroup);
 
   group.userData = { topStick: topStickGroup };
@@ -183,190 +139,159 @@ export function createClapperboardModel() {
 }
 
 // ============================================================================
-// 3. MODEL 2: 3D STYLIZED PURPLE SCISSORS (AI MATTING / BACKGROUND REMOVER)
+// 3. MODEL 2: 3D STYLIZED PURPLE SCISSORS
 // ============================================================================
 export function createScissorsModel() {
   const group = new THREE.Group();
 
   const handleMat = new THREE.MeshPhysicalMaterial({
-    color: 0xa855f7, // Lilac / Purple
+    color: 0xa855f7, // Vibrant Purple
     roughness: 0.18,
     metalness: 0.08,
     clearcoat: 0.85,
     clearcoatRoughness: 0.15,
-    sheen: 0.3,
-    sheenColor: new THREE.Color(0xc084fc),
   });
 
   const bladeMat = new THREE.MeshStandardMaterial({
     color: 0xe2e8f0,
-    roughness: 0.15,
+    roughness: 0.12,
     metalness: 0.92,
   });
 
   const pinMat = new THREE.MeshStandardMaterial({
-    color: 0xeab308, // Gold hinge pin
+    color: 0xeab308, // Gold hinge
     metalness: 0.9,
     roughness: 0.2,
   });
 
-  // Helper to create a single scissor blade half (Handle loop + Steel blade)
-  const makeHalf = (isLeft) => {
-    const halfGroup = new THREE.Group();
+  // Left Half
+  const leftHalf = new THREE.Group();
+  
+  // Steel Blade
+  const leftBlade = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.4, 0.04), bladeMat);
+  leftBlade.position.set(0.06, 0.7, 0.02);
+  leftBlade.rotation.z = -0.06;
+  leftHalf.add(leftBlade);
 
-    // 1. Steel Blade
-    const bladeShape = new THREE.Shape();
-    bladeShape.moveTo(0, 0);
-    bladeShape.lineTo(0.24, 0);
-    bladeShape.lineTo(0.12, 1.4);
-    bladeShape.lineTo(-0.06, 1.35);
-    bladeShape.closePath();
+  // Purple Handle Loop
+  const leftRing = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.13, 16, 28), handleMat);
+  leftRing.position.set(0.32, -0.75, 0);
+  leftRing.rotation.z = -0.2;
+  leftHalf.add(leftRing);
 
-    const extrudeSettings = { depth: 0.06, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.02, bevelThickness: 0.02 };
-    const bladeGeo = new THREE.ExtrudeGeometry(bladeShape, extrudeSettings);
-    const bladeMesh = new THREE.Mesh(bladeGeo, bladeMat);
-    bladeMesh.position.set(-0.1, 0, isLeft ? 0.03 : -0.09);
-    halfGroup.add(bladeMesh);
+  // Purple Stem
+  const leftStem = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.15, 0.55, 16), handleMat);
+  leftStem.position.set(0.15, -0.32, 0);
+  leftStem.rotation.z = 0.25;
+  leftHalf.add(leftStem);
 
-    // 2. Purple Handle Ring Loop
-    const handleRingGeo = new THREE.TorusGeometry(0.48, 0.14, 16, 32);
-    const handleRingMesh = new THREE.Mesh(handleRingGeo, handleMat);
-    handleRingMesh.position.set(0.35, -0.85, 0);
-    handleRingMesh.rotation.z = -0.2;
-    halfGroup.add(handleRingMesh);
-
-    // Connecting Bridge
-    const bridgeGeo = new THREE.CylinderGeometry(0.16, 0.18, 0.6, 16);
-    const bridgeMesh = new THREE.Mesh(bridgeGeo, handleMat);
-    bridgeMesh.position.set(0.18, -0.4, 0);
-    bridgeMesh.rotation.z = 0.3;
-    halfGroup.add(bridgeMesh);
-
-    return halfGroup;
-  };
-
-  const leftHalf = makeHalf(true);
-  leftHalf.rotation.z = 0.25; // Open angle
+  leftHalf.rotation.z = 0.25;
   group.add(leftHalf);
 
-  const rightHalf = makeHalf(false);
-  rightHalf.scale.x = -1;
-  rightHalf.rotation.z = -0.25; // Open angle
+  // Right Half (Mirrored)
+  const rightHalf = new THREE.Group();
+
+  const rightBlade = new THREE.Mesh(new THREE.BoxGeometry(0.24, 1.4, 0.04), bladeMat);
+  rightBlade.position.set(-0.06, 0.7, -0.02);
+  rightBlade.rotation.z = 0.06;
+  rightHalf.add(rightBlade);
+
+  const rightRing = new THREE.Mesh(new THREE.TorusGeometry(0.42, 0.13, 16, 28), handleMat);
+  rightRing.position.set(-0.32, -0.75, 0);
+  rightRing.rotation.z = 0.2;
+  rightHalf.add(rightRing);
+
+  const rightStem = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.15, 0.55, 16), handleMat);
+  rightStem.position.set(-0.15, -0.32, 0);
+  rightStem.rotation.z = -0.25;
+  rightHalf.add(rightStem);
+
+  rightHalf.rotation.z = -0.25;
   group.add(rightHalf);
 
-  // Center Gold Hinge Pin
-  const centerPinGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.24, 24);
-  const centerPinMesh = new THREE.Mesh(centerPinGeo, pinMat);
-  centerPinMesh.rotation.x = Math.PI / 2;
-  group.add(centerPinMesh);
+  // Center Gold Pin
+  const centerPin = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.2, 20), pinMat);
+  centerPin.rotation.x = Math.PI / 2;
+  group.add(centerPin);
 
   group.userData = { leftHalf, rightHalf };
-  group.scale.setScalar(0.9);
+  group.scale.setScalar(0.92);
   return group;
 }
 
 // ============================================================================
-// 4. MODEL 3: 3D CURLED PAPER SHEET (SMART PDF DIGITIZER)
+// 4. MODEL 3: 3D CURLED PAPER SHEET
 // ============================================================================
 export function createCurledPaperModel() {
   const group = new THREE.Group();
 
-  const paperMat = new THREE.MeshPhysicalMaterial({
+  const paperMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,
     roughness: 0.25,
     metalness: 0.02,
-    clearcoat: 0.5,
-    clearcoatRoughness: 0.2,
-    side: THREE.DoubleSide,
   });
 
-  const foldUnderMat = new THREE.MeshStandardMaterial({
-    color: 0xe2e8f0,
-    roughness: 0.4,
-    side: THREE.DoubleSide,
+  const foldMat = new THREE.MeshStandardMaterial({
+    color: 0xf1f5f9,
+    roughness: 0.35,
   });
 
-  // Base Document Sheet with top-left notch
-  const paperShape = new THREE.Shape();
-  paperShape.moveTo(-0.8, -1.3);
-  paperShape.lineTo(0.9, -1.3);
-  paperShape.lineTo(0.9, 1.3);
-  paperShape.lineTo(-0.25, 1.3);
-  paperShape.lineTo(-0.8, 0.75); // Cutout for curled fold
-  paperShape.closePath();
+  // Base Document Sheet
+  const sheet = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.1, 0.04), paperMat);
+  group.add(sheet);
 
-  const extrudeSettings = { depth: 0.04, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.015, bevelThickness: 0.015 };
-  const paperGeo = new THREE.ExtrudeGeometry(paperShape, extrudeSettings);
-  const paperMesh = new THREE.Mesh(paperGeo, paperMat);
-  group.add(paperMesh);
+  // 3D Folded / Curled Corner (Top-Left)
+  const foldCorner = new THREE.Mesh(
+    new THREE.ConeGeometry(0.48, 0.05, 4),
+    foldMat
+  );
+  foldCorner.position.set(-0.62, 0.88, 0.05);
+  foldCorner.rotation.z = Math.PI / 4;
+  foldCorner.rotation.x = 0.3;
+  group.add(foldCorner);
 
-  // 3D Curled Folded Corner (Curved triangle in top-left)
-  const foldGroup = new THREE.Group();
-  foldGroup.position.set(-0.52, 1.02, 0.06);
-
-  const foldShape = new THREE.Shape();
-  foldShape.moveTo(0, 0);
-  foldShape.lineTo(0.55, 0.28);
-  foldShape.lineTo(-0.28, -0.55);
-  foldShape.closePath();
-
-  const foldGeo = new THREE.ExtrudeGeometry(foldShape, { depth: 0.03, bevelEnabled: true, bevelSize: 0.01, bevelThickness: 0.01 });
-  const foldMesh = new THREE.Mesh(foldGeo, foldUnderMat);
-  foldMesh.rotation.z = -Math.PI / 4;
-  foldMesh.rotation.y = -0.35; // Dimensional lift from page
-  foldGroup.add(foldMesh);
-
-  group.add(foldGroup);
-
-  // Subtle simulated printed lines on the document
+  // Simulated Text Lines
   const lineMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8 });
-  for (let y = 0.4; y >= -1.0; y -= 0.25) {
-    const lineGeo = new THREE.BoxGeometry(1.2, 0.04, 0.01);
-    const lineMesh = new THREE.Mesh(lineGeo, lineMat);
-    lineMesh.position.set(0.05, y, 0.05);
-    group.add(lineMesh);
-  }
+  const linePositions = [0.4, 0.15, -0.1, -0.35, -0.6, -0.85];
+  linePositions.forEach((y, i) => {
+    const w = i % 2 === 0 ? 1.1 : 0.85;
+    const line = new THREE.Mesh(new THREE.BoxGeometry(w, 0.04, 0.01), lineMat);
+    line.position.set(w === 1.1 ? 0 : -0.12, y, 0.03);
+    group.add(line);
+  });
 
   group.scale.setScalar(0.95);
   return group;
 }
 
 // ============================================================================
-// 5. MODEL 4: 3D TRANSLUCENT RED RUBY DICE (PROCEDURAL 3D CODE / img2threejs)
+// 5. MODEL 4: 3D TRANSLUCENT RED RUBY DICE
 // ============================================================================
 export function createRedDiceModel() {
   const group = new THREE.Group();
 
-  // 1. Ruby Red Glass Material
+  // Red Ruby Glass Cube
   const glassMat = new THREE.MeshPhysicalMaterial({
-    color: 0xef4444, // Vibrant Red Ruby
-    transmission: 0.90,
-    opacity: 0.96,
+    color: 0xef4444, // Vibrant Red
+    transmission: 0.85,
+    opacity: 0.95,
     transparent: true,
-    roughness: 0.06,
-    ior: 1.54,
-    thickness: 1.4,
-    reflectivity: 0.9,
+    roughness: 0.08,
+    ior: 1.52,
+    thickness: 1.2,
     clearcoat: 1.0,
     clearcoatRoughness: 0.05,
     attenuationColor: new THREE.Color(0xdc2626),
-    attenuationDistance: 0.8,
+    attenuationDistance: 0.7,
   });
 
-  // Base Cube with bevel
-  const cubeGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5, 8, 8, 8);
-  const cubeMesh = new THREE.Mesh(cubeGeo, glassMat);
-  group.add(cubeMesh);
+  const cube = new THREE.Mesh(new THREE.BoxGeometry(1.4, 1.4, 1.4, 4, 4, 4), glassMat);
+  group.add(cube);
 
-  // 2. White Inset Pips (Dots)
-  const pipMat = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    roughness: 0.2,
-    metalness: 0.1,
-  });
-
-  const pipGeo = new THREE.SphereGeometry(0.12, 16, 16);
-  pipGeo.scale(1, 1, 0.4); // Flattened dome
+  // White Inset Pips (Dots)
+  const pipMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+  const pipGeo = new THREE.SphereGeometry(0.10, 12, 12);
+  pipGeo.scale(1, 1, 0.35);
 
   const addPip = (x, y, z, rotX = 0, rotY = 0) => {
     const pip = new THREE.Mesh(pipGeo, pipMat);
@@ -375,13 +300,13 @@ export function createRedDiceModel() {
     group.add(pip);
   };
 
-  const d = 0.38;
-  const o = 0.76;
+  const d = 0.36;
+  const o = 0.71;
 
-  // Face 1 (Front: +Z) -> 1 pip
+  // Face 1 (Front: +Z)
   addPip(0, 0, o);
 
-  // Face 6 (Back: -Z) -> 6 pips
+  // Face 6 (Back: -Z)
   addPip(-d, -d, -o, 0, Math.PI);
   addPip(-d, 0, -o, 0, Math.PI);
   addPip(-d, d, -o, 0, Math.PI);
@@ -389,44 +314,41 @@ export function createRedDiceModel() {
   addPip(d, 0, -o, 0, Math.PI);
   addPip(d, d, -o, 0, Math.PI);
 
-  // Face 2 (Top: +Y) -> 2 pips
+  // Face 2 (Top: +Y)
   addPip(-d, o, -d, -Math.PI / 2, 0);
   addPip(d, o, d, -Math.PI / 2, 0);
 
-  // Face 5 (Bottom: -Y) -> 5 pips
+  // Face 5 (Bottom: -Y)
   addPip(0, -o, 0, Math.PI / 2, 0);
   addPip(-d, -o, -d, Math.PI / 2, 0);
   addPip(-d, -o, d, Math.PI / 2, 0);
   addPip(d, -o, -d, Math.PI / 2, 0);
   addPip(d, -o, d, Math.PI / 2, 0);
 
-  // Face 3 (Right: +X) -> 3 pips
+  // Face 3 (Right: +X)
   addPip(o, -d, -d, 0, Math.PI / 2);
   addPip(o, 0, 0, 0, Math.PI / 2);
   addPip(o, d, d, 0, Math.PI / 2);
 
-  // Face 4 (Left: -X) -> 4 pips
+  // Face 4 (Left: -X)
   addPip(-o, -d, -d, 0, -Math.PI / 2);
   addPip(-o, -d, d, 0, -Math.PI / 2);
   addPip(-o, d, -d, 0, -Math.PI / 2);
   addPip(-o, d, d, 0, -Math.PI / 2);
 
-  // Dynamic Isometric Tilt as seen in reference photo
   group.rotation.set(0.55, 0.65, -0.2);
-  group.scale.setScalar(0.9);
+  group.scale.setScalar(0.92);
   return group;
 }
 
 // ============================================================================
-// 6. SINGLE ISOLATED MINI-VIEWPORT CONTROLLER FOR FLICKER-FREE RENDERING
+// 6. ISOLATED, RESILIENT CARD 3D VIEWER
 // ============================================================================
 export class Card3DViewer {
   constructor(canvas, modelType, options = {}) {
     this.canvas = canvas;
     this.modelType = modelType;
-    this.options = Object.assign({
-      isPaperclipPin: false,
-    }, options);
+    this.options = Object.assign({ isPaperclipPin: false }, options);
 
     this.isHovered = false;
     this.mouseX = 0;
@@ -434,14 +356,18 @@ export class Card3DViewer {
     this.targetMouseX = 0;
     this.targetMouseY = 0;
 
-    this.init();
+    try {
+      this.init();
+    } catch (err) {
+      console.error(`[Card3DViewer] Error initializing ${modelType}:`, err);
+    }
   }
 
   init() {
     this.scene = new THREE.Scene();
 
-    const w = this.canvas.clientWidth || 100;
-    const h = this.canvas.clientHeight || 100;
+    const w = this.canvas.width || 120;
+    const h = this.canvas.height || 120;
 
     this.camera = new THREE.PerspectiveCamera(38, w / h, 0.1, 100);
     this.camera.position.z = this.options.isPaperclipPin ? 5.2 : 5.8;
@@ -456,7 +382,7 @@ export class Card3DViewer {
     this.renderer.setSize(w, h, false);
     this.renderer.setPixelRatio(dpr);
 
-    // Studio Lighting
+    // Studio Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
     this.scene.add(ambientLight);
 
@@ -468,7 +394,6 @@ export class Card3DViewer {
     rimLight.position.set(-4, -3, 3);
     this.scene.add(rimLight);
 
-    // Instantiate specific model
     if (this.options.isPaperclipPin) {
       this.model = createPaperclipMesh(0x0284c7);
     } else {
@@ -492,7 +417,7 @@ export class Card3DViewer {
       this.scene.add(this.model);
     }
 
-    // Hover Interaction tied to the parent card
+    // Hover Interaction
     const card = this.canvas.closest('.card-3d-tilt') || this.canvas.parentElement;
     if (card) {
       card.addEventListener('mouseenter', () => (this.isHovered = true));
@@ -525,19 +450,16 @@ export class Card3DViewer {
 
     if (this.model) {
       if (this.options.isPaperclipPin) {
-        // Small Top Paperclip Pin Reaction
         const baseZ = -0.35;
-        this.model.rotation.z = baseZ + (this.isHovered ? this.mouseX * 0.2 : Math.sin(elapsedTime * 1.5) * 0.03);
-        this.model.rotation.y = this.isHovered ? this.mouseX * 0.3 : 0;
+        this.model.rotation.z = baseZ + (this.isHovered ? this.mouseX * 0.25 : Math.sin(elapsedTime * 1.5) * 0.03);
+        this.model.rotation.y = this.isHovered ? this.mouseX * 0.35 : 0;
       } else {
-        // Main 3D Card Elements Reaction
         switch (this.modelType) {
           case 'clapperboard':
             this.model.rotation.y = this.mouseX * 0.5 + Math.sin(elapsedTime * 1.2) * 0.08;
             this.model.rotation.x = -this.mouseY * 0.4 + 0.1;
-            // Clapper clap micro-animation on hover
-            if (this.model.userData.topStick) {
-              const clapAngle = this.isHovered ? 0.15 + Math.sin(elapsedTime * 6) * 0.12 : 0.38;
+            if (this.model.userData && this.model.userData.topStick) {
+              const clapAngle = this.isHovered ? 0.15 + Math.sin(elapsedTime * 6) * 0.12 : 0.35;
               this.model.userData.topStick.rotation.z += (clapAngle - this.model.userData.topStick.rotation.z) * 0.2;
             }
             break;
@@ -545,8 +467,7 @@ export class Card3DViewer {
           case 'scissors':
             this.model.rotation.y = this.mouseX * 0.6 + Math.sin(elapsedTime * 1.5) * 0.1;
             this.model.rotation.x = -this.mouseY * 0.5;
-            // Scissors snip micro-animation on hover
-            if (this.model.userData.leftHalf && this.model.userData.rightHalf) {
+            if (this.model.userData && this.model.userData.leftHalf && this.model.userData.rightHalf) {
               const snipAngle = this.isHovered ? 0.12 + Math.sin(elapsedTime * 8) * 0.15 : 0.25;
               this.model.userData.leftHalf.rotation.z = snipAngle;
               this.model.userData.rightHalf.rotation.z = -snipAngle;
@@ -560,7 +481,6 @@ export class Card3DViewer {
             break;
 
           case 'red_dice':
-            // Continuous tumbling ruby dice + mouse parallax
             this.model.rotation.x += delta * (this.isHovered ? 1.8 : 0.5);
             this.model.rotation.y += delta * (this.isHovered ? 2.2 : 0.6);
             this.model.rotation.z = this.mouseX * 0.6;
@@ -574,7 +494,6 @@ export class Card3DViewer {
 }
 
 export function initPipeline3DModels() {
-  // 1. Inicializa os 4 modelos centrais dos cards
   const cardElements = [
     { id: 'canvas-clapperboard', type: 'clapperboard' },
     { id: 'canvas-scissors', type: 'scissors' },
@@ -589,7 +508,6 @@ export function initPipeline3DModels() {
     }
   });
 
-  // 2. Inicializa os clipes 3D pequenos posicionados no topo dos cards (paperclip pin)
   const pinCanvases = document.querySelectorAll('.paperclip-pin-canvas');
   pinCanvases.forEach((canvas) => {
     new Card3DViewer(canvas, 'paperclip', { isPaperclipPin: true });

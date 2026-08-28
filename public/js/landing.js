@@ -4,9 +4,10 @@ import { HeroScrollTelling } from './heroScroll.js';
 import { LogoThreeScene } from './logoThree.js';
 import { init3DTiltCards } from './card3d.js';
 import { initPipeline3DModels } from './cardModelsThree.js';
+import { initFluidEngine } from './fluidContainer.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('⚡ [FramerTool Landing Page] Initializing 3D Elements, Pins, Logo & Scrolltelling...');
+  console.log('🌊 [FramerTool Landing Page] Initializing 3D Fluid Container, Droplets, Pins & Models...');
 
   // 1. Initialize 240-frame scroll engine
   const scrollEngine = new HeroScrollTelling();
@@ -14,13 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. Initialize 3D Three.js Logo in the floating navbar
   const logo3D = new LogoThreeScene();
 
-  // 3. Initialize Interactive 3D Pipeline Models (Clapper, Scissors, Paper, Dice) + Top Paperclip Pins
+  // 3. Initialize Interactive 3D Aquatic Fluid Container & Droplets
+  const fluidEngine = initFluidEngine();
+
+  // 4. Initialize Interactive 3D Pipeline Models (Clapper, Scissors, Paper, Dice) + Top Paperclip Pins
   initPipeline3DModels();
 
-  // 4. Initialize Interactive 3D Tilt Cards
+  // 5. Initialize Interactive 3D Tilt Cards
   init3DTiltCards();
 
-  // 5. Navbar scroll effect
+  // 6. Navbar scroll effect
   const navbar = document.getElementById('floating-navbar');
   window.addEventListener('scroll', () => {
     if (!navbar) return;
@@ -33,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
-  // 6. Smooth scroll on SCROLL indicator click
+  // 7. Smooth scroll on SCROLL indicator click
   document.getElementById('hero-scroll-indicator')?.addEventListener('click', () => {
     window.scrollTo({
       top: window.innerHeight * 1.2,
