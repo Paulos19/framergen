@@ -1,5 +1,5 @@
-// FramerTool - Advanced 3D Aquatic Fluid Surface, Viscous Wake Trail & Droplet Engine (Three.js WebGL)
-// High-performance, zero flicker, cross-section fluid continuity, elastic droplet physics, and scroll overflow.
+// FramerTool - 3D Aquatic Fluid Surface & Interactive Wave Wake Trail (Three.js WebGL)
+// 60 FPS rock-solid, zero flicker, viscous mouse wake trail, elastic water droplets, and splash impacts.
 
 export class FluidEngineBackground {
   constructor() {
@@ -22,7 +22,6 @@ export class FluidEngineBackground {
 
     this.droplets = [];
     this.ripples = [];
-    this.trailPoints = [];
     this.scrollProgress = 0;
 
     this.init();
@@ -33,7 +32,7 @@ export class FluidEngineBackground {
 
     const rect = this.container.getBoundingClientRect();
     this.width = rect.width || window.innerWidth;
-    this.height = rect.height || 850;
+    this.height = rect.height || 750;
 
     this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 100);
     this.camera.position.z = 22;
@@ -44,54 +43,55 @@ export class FluidEngineBackground {
       alpha: true,
       antialias: true,
       powerPreference: 'high-performance',
+      precision: 'highp',
     });
     this.renderer.setSize(this.width, this.height, false);
     this.renderer.setPixelRatio(dpr);
 
-    // 1. Iluminação Aquática e Cáusticos Realistas
+    // 1. Studio Aquatic Lighting & Caustic Highlights
     const ambientLight = new THREE.AmbientLight(0xdbeafe, 1.4);
     this.scene.add(ambientLight);
 
-    const sunLight = new THREE.DirectionalLight(0xffffff, 2.6);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 2.8);
     sunLight.position.set(12, 22, 18);
     this.scene.add(sunLight);
 
-    const deepBlueLight = new THREE.PointLight(0x0284c7, 3.8, 50);
-    deepBlueLight.position.set(-12, -10, 12);
-    this.scene.add(deepBlueLight);
+    const blueLight = new THREE.PointLight(0x0284c7, 3.5, 45);
+    blueLight.position.set(-12, -10, 12);
+    this.scene.add(blueLight);
 
-    const cyanRim = new THREE.PointLight(0x38bdf8, 2.2, 35);
-    cyanRim.position.set(0, 15, 10);
+    const cyanRim = new THREE.PointLight(0x38bdf8, 2.0, 30);
+    cyanRim.position.set(0, 12, 10);
     this.scene.add(cyanRim);
 
-    // 2. Malha de Superfície Líquida 3D
+    // 2. Malha de Superfície Líquida 3D (Subdivision Plane)
     this.createWaterSurface();
 
-    // 3. Sistema de Gotas Elásticas com Refração e Tensão Superficial
+    // 3. Sistema de Gotas Elásticas com Tensão Superficial
     this.createDropletsPool();
 
-    // 4. Listeners Globais e Interações de Mouse / Scroll
+    // 4. Listeners de Interação (Mouse Wake & Scroll)
     this.setupInteractions();
 
-    // 5. Loop de Renderização Contínuo
+    // 5. Loop de Renderização
     this.clock = new THREE.Clock();
     this.animate();
   }
 
   createWaterSurface() {
-    const segX = 70;
-    const segY = 45;
-    this.waterGeo = new THREE.PlaneGeometry(42, 28, segX, segY);
-    this.originalPos = this.waterGeo.attributes.position.array.slice();
+    const segX = 64;
+    const segY = 40;
+    this.waterGeo = new THREE.PlaneGeometry(38, 25, segX, segY);
+    this.originalPos = new Float32Array(this.waterGeo.attributes.position.array);
 
-    // Material Físico Aquático Profundo (Com Brilho Especular e Refração)
+    // Material Físico Aquático Realista
     this.waterMat = new THREE.MeshPhysicalMaterial({
-      color: 0x1e40af,
+      color: 0x1d4ed8,
       emissive: 0x0284c7,
       emissiveIntensity: 0.35,
       roughness: 0.1,
       metalness: 0.12,
-      transmission: 0.4,
+      transmission: 0.45,
       ior: 1.333,
       thickness: 2.2,
       clearcoat: 1.0,
@@ -108,21 +108,21 @@ export class FluidEngineBackground {
 
   createDropletsPool() {
     this.dropletsGroup = new THREE.Group();
-    const dropletGeo = new THREE.SphereGeometry(0.24, 16, 16);
+    const dropletGeo = new THREE.SphereGeometry(0.22, 16, 16);
     const dropletMat = new THREE.MeshPhysicalMaterial({
       color: 0x38bdf8,
       emissive: 0x0284c7,
-      emissiveIntensity: 0.4,
-      roughness: 0.05,
+      emissiveIntensity: 0.35,
+      roughness: 0.06,
       transmission: 0.85,
       ior: 1.333,
       clearcoat: 1.0,
-      thickness: 0.9,
-      sheen: 0.9,
+      thickness: 0.8,
+      sheen: 0.8,
       sheenColor: new THREE.Color(0xffffff),
     });
 
-    for (let i = 0; i < 18; i++) {
+    for (let i = 0; i < 16; i++) {
       const mesh = new THREE.Mesh(dropletGeo, dropletMat);
       mesh.visible = false;
       this.dropletsGroup.add(mesh);
@@ -142,9 +142,23 @@ export class FluidEngineBackground {
   setupInteractions() {
     window.addEventListener('resize', () => this.onResize());
 
-    // Rastreamento de Mouse Global na Página
-    window.addEventListener('mousemove', (e) => {
-      if (!this.container) return;
+    // Rastreamento no Container do Card Azul
+    this.container.addEventListener('mouseenter', () => {
+      this.mouse.isHovering = true;
+    });
+
+    this.container.addEventListener('mouseleave', () => {
+      this.mouse.isHovering = false;
+      this.droplets.forEach(d => {
+        if (d.active) {
+          this.triggerSplash(d.x, d.y, 1.2);
+          d.active = false;
+          d.mesh.visible = false;
+        }
+      });
+    });
+
+    this.container.addEventListener('mousemove', (e) => {
       const rect = this.container.getBoundingClientRect();
       const rawX = (e.clientX - rect.left) / rect.width;
       const rawY = (e.clientY - rect.top) / rect.height;
@@ -158,24 +172,20 @@ export class FluidEngineBackground {
       this.mouse.prevX = rawX;
       this.mouse.prevY = rawY;
 
-      // Coordenadas 3D do mundo
-      this.mouse.targetX = (rawX - 0.5) * 38;
-      this.mouse.targetY = -(rawY - 0.5) * 25;
+      // Coordenadas 3D do mundo (-18 a 18 em X, -12 a 12 em Y)
+      this.mouse.targetX = (rawX - 0.5) * 36;
+      this.mouse.targetY = -(rawY - 0.5) * 23;
 
-      this.mouse.isHovering = (rawX >= -0.15 && rawX <= 1.15 && rawY >= -0.15 && rawY <= 1.15);
+      // Cria ondas de rastro viscoso sob o cursor
+      this.addRipple(this.mouse.targetX, this.mouse.targetY, Math.min(2.5, this.mouse.speed));
 
-      if (this.mouse.isHovering) {
-        // Adiciona ponto ao rastro fluido (wake trail)
-        this.addTrailPoint(this.mouse.targetX, this.mouse.targetY, Math.min(2.5, this.mouse.speed));
-
-        // Solta gotas elásticas com velocidade
-        if (this.mouse.speed > 0.75) {
-          this.spawnDroplet(this.mouse.targetX, this.mouse.targetY, vx, vy);
-        }
+      // Solta gotas se houver aceleração rápida
+      if (this.mouse.speed > 0.8) {
+        this.spawnDroplet(this.mouse.targetX, this.mouse.targetY, vx, vy);
       }
-    }, { passive: true });
+    });
 
-    // Scroll Progress para Interação Entre Sessões
+    // Scroll progress para o transbordo suave
     window.addEventListener('scroll', () => {
       if (!this.container) return;
       const rect = this.container.getBoundingClientRect();
@@ -183,24 +193,23 @@ export class FluidEngineBackground {
       const totalDist = rect.height + winH;
       const current = winH - rect.top;
       this.scrollProgress = Math.max(0, Math.min(1, current / totalDist));
-      this.updateCrossSectionOverflow();
+      this.updateOverflowEffect();
     }, { passive: true });
-    this.updateCrossSectionOverflow();
   }
 
-  addTrailPoint(x, y, strength = 1.0) {
+  addRipple(x, y, strength = 1.0) {
     this.ripples.push({
       x, y,
       radius: 0.1,
-      maxRadius: 9.0,
-      strength: strength * 0.65,
+      maxRadius: 8.5,
+      strength: strength * 0.6,
       age: 0,
     });
-    if (this.ripples.length > 24) this.ripples.shift();
+    if (this.ripples.length > 20) this.ripples.shift();
   }
 
   triggerSplash(x, y, force = 1.0) {
-    this.addTrailPoint(x, y, force * 2.2);
+    this.addRipple(x, y, force * 2.0);
   }
 
   spawnDroplet(x, y, vx, vy) {
@@ -211,21 +220,21 @@ export class FluidEngineBackground {
     droplet.mesh.visible = true;
     droplet.x = x + (Math.random() - 0.5) * 0.6;
     droplet.y = y + (Math.random() - 0.5) * 0.6;
-    droplet.z = 0.6;
+    droplet.z = 0.5;
 
     droplet.vx = vx * 0.22 + (Math.random() - 0.5) * 0.3;
     droplet.vy = -vy * 0.22 + (Math.random() - 0.5) * 0.3;
-    droplet.vz = 0.9 + Math.random() * 0.5;
+    droplet.vz = 0.85 + Math.random() * 0.5;
     droplet.detached = false;
   }
 
-  updateCrossSectionOverflow() {
+  updateOverflowEffect() {
     const overflowOverlay = document.getElementById('fluid-overflow-overlay');
     if (overflowOverlay) {
-      if (this.scrollProgress > 0.4) {
-        const factor = Math.min(1, (this.scrollProgress - 0.4) / 0.45);
+      if (this.scrollProgress > 0.42) {
+        const factor = Math.min(1, (this.scrollProgress - 0.42) / 0.4);
         overflowOverlay.style.opacity = factor;
-        overflowOverlay.style.transform = `translateY(${factor * 25}px)`;
+        overflowOverlay.style.transform = `translateY(${factor * 22}px)`;
       } else {
         overflowOverlay.style.opacity = 0;
       }
@@ -236,7 +245,7 @@ export class FluidEngineBackground {
     if (!this.container || !this.renderer || !this.camera) return;
     const rect = this.container.getBoundingClientRect();
     this.width = rect.width || window.innerWidth;
-    this.height = rect.height || 850;
+    this.height = rect.height || 750;
 
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
@@ -250,61 +259,61 @@ export class FluidEngineBackground {
     const delta = this.clock.getDelta();
     const time = this.clock.getElapsedTime();
 
-    // Suavização da Posição do Mouse (Wake Smoothing)
-    this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.18;
-    this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.18;
+    // Suavização do movimento do mouse
+    this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.2;
+    this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.2;
 
     // 1. Atualização dos Ripples do Rastro
     for (let i = this.ripples.length - 1; i >= 0; i--) {
       const r = this.ripples[i];
-      r.radius += delta * 7.0;
+      r.radius += delta * 6.5;
       r.age += delta;
       r.strength *= 0.94;
-      if (r.age > 2.2 || r.strength < 0.01) {
+      if (r.age > 2.0 || r.strength < 0.01) {
         this.ripples.splice(i, 1);
       }
     }
 
-    // 2. Deformação Geométrica da Água (Ondas Contínuas e Rastro do Mouse)
+    // 2. Deformação Ondulatória na Superfície da Água
     const pos = this.waterGeo.attributes.position.array;
     const orig = this.originalPos;
     const count = pos.length / 3;
-    const overflowWave = Math.sin(this.scrollProgress * Math.PI) * 2.0;
+    const overflowWave = Math.sin(this.scrollProgress * Math.PI) * 1.8;
 
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
       const vx = orig[i3];
       const vy = orig[i3 + 1];
 
-      // Ondulação Orgânica Base
-      let z = Math.sin(vx * 0.28 + time * 1.7) * Math.cos(vy * 0.28 + time * 1.5) * 0.3;
-      z += Math.sin(vx * 0.55 - time * 2.1) * 0.14;
+      // Ondulação Orgânica Natural
+      let z = Math.sin(vx * 0.28 + time * 1.6) * Math.cos(vy * 0.28 + time * 1.4) * 0.28;
+      z += Math.sin(vx * 0.55 - time * 2.0) * 0.12;
 
       // Rastro Viscoso Sob o Mouse
       if (this.mouse.isHovering) {
         const dx = vx - this.mouse.x;
         const dy = vy - this.mouse.y;
         const dist = Math.hypot(dx, dy);
-        if (dist < 7.5) {
-          const falloff = Math.cos((dist / 7.5) * Math.PI * 0.5);
-          z += Math.sin(dist * 1.8 - time * 7.5) * falloff * 0.75;
+        if (dist < 6.5) {
+          const falloff = Math.cos((dist / 6.5) * Math.PI * 0.5);
+          z += Math.sin(dist * 1.8 - time * 7.5) * falloff * 0.7;
         }
       }
 
-      // Propagação dos Ripples
+      // Propagação das Ondas (Ripples)
       for (let j = 0; j < this.ripples.length; j++) {
         const rip = this.ripples[j];
         const dist = Math.hypot(vx - rip.x, vy - rip.y);
         const diff = dist - rip.radius;
-        if (Math.abs(diff) < 1.8) {
+        if (Math.abs(diff) < 1.6) {
           z += Math.cos(diff * 2.2) * rip.strength * (1.0 - rip.radius / rip.maxRadius);
         }
       }
 
-      // Transbordo na Base (Interação com a Próxima Seção)
-      if (vy < -5.0) {
-        const bottomFactor = (-vy - 5.0) / 7.0;
-        z -= overflowWave * bottomFactor * 1.1;
+      // Deformação de Transbordo na Base
+      if (vy < -4.5) {
+        const bottomFactor = (-vy - 4.5) / 6.5;
+        z -= overflowWave * bottomFactor * 0.9;
       }
 
       pos[i3 + 2] = z;
@@ -319,23 +328,23 @@ export class FluidEngineBackground {
       d.x += d.vx;
       d.y += d.vy;
       d.z += d.vz;
-      d.vz -= delta * 3.6;
+      d.vz -= delta * 3.5;
 
-      // Atração Elástica em Direção ao Cursor
+      // Força de atração elástica em direção ao cursor
       if (this.mouse.isHovering && !d.detached) {
         const targetDX = this.mouse.x - d.x;
         const targetDY = this.mouse.y - d.y;
-        d.vx += targetDX * delta * 2.6;
-        d.vy += targetDY * delta * 2.6;
+        d.vx += targetDX * delta * 2.5;
+        d.vy += targetDY * delta * 2.5;
 
-        if (Math.hypot(targetDX, targetDY) > 9.5) {
+        if (Math.hypot(targetDX, targetDY) > 8.5) {
           d.detached = true;
         }
       }
 
-      // Retorno e Splash na Água
+      // Impacto de retorno na água (Z <= 0.1)
       if (d.z <= 0.1 && d.vz < 0) {
-        this.triggerSplash(d.x, d.y, Math.abs(d.vz) * 0.85);
+        this.triggerSplash(d.x, d.y, Math.abs(d.vz) * 0.8);
         d.active = false;
         d.mesh.visible = false;
       } else {

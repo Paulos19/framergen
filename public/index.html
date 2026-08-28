@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FramerTool | Capture Every Frame. Perfectly.</title>
-  <meta name="description" content="High-speed 24 FPS frame extraction, perfect AI background removal, and seamless image-to-PDF scanning. Crafted for creators." />
+  <meta name="description"
+    content="High-speed 24 FPS frame extraction, perfect AI background removal, and seamless image-to-PDF scanning. Crafted for creators." />
 
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 
   <!-- Google Fonts: Plus Jakarta Sans & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -87,25 +92,36 @@
 
     /* Subtle Floating Keyframes for Mascot */
     @keyframes mascot-float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(1.5deg); }
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(1.5deg);
+      }
     }
+
     .animate-mascot-float {
       animation: mascot-float 4s ease-in-out infinite;
     }
   </style>
 </head>
+
 <body class="antialiased selection:bg-amber-500 selection:text-white font-sans">
 
   <!-- ========================================================================= -->
   <!-- 1. FLOATING PILL NAVBAR WITH EXPANDED WIDTH & 3D THREE.JS LOGO -->
   <!-- ========================================================================= -->
   <header class="fixed top-5 left-0 right-0 z-50 flex justify-center px-4 sm:px-8 pointer-events-none">
-    <nav id="floating-navbar" class="pill-navbar pointer-events-auto bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-xl shadow-black/5 border border-white/60 flex items-center justify-between gap-6 sm:gap-10 max-w-5xl w-full">
-      
+    <nav id="floating-navbar"
+      class="pill-navbar pointer-events-auto bg-white/90 backdrop-blur-md px-6 py-3 rounded-full shadow-xl shadow-black/5 border border-white/60 flex items-center justify-between gap-6 sm:gap-10 max-w-5xl w-full">
+
       <!-- 3D THREE.JS LOGO & BRAND -->
       <a href="#" class="flex items-center gap-3 group shrink-0">
-        <div class="w-8 h-8 rounded-full bg-slate-950 flex items-center justify-center overflow-hidden shadow-sm transition-transform group-hover:scale-110">
+        <div
+          class="w-8 h-8 rounded-full bg-slate-950 flex items-center justify-center overflow-hidden shadow-sm transition-transform group-hover:scale-110">
           <canvas id="logo-three-canvas" class="w-8 h-8 block pointer-events-none"></canvas>
         </div>
         <span class="font-bold text-base sm:text-lg tracking-tight text-slate-950 font-sans">FramerTool</span>
@@ -122,7 +138,8 @@
 
       <!-- RIGHT ACTION BUTTON (LAUNCH STUDIO) -->
       <div class="flex items-center gap-3 shrink-0">
-        <a href="/studio.html" class="px-5 py-2.5 rounded-full bg-slate-950 hover:bg-black text-white text-xs sm:text-sm font-semibold shadow-md shadow-slate-900/10 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+        <a href="/studio.html"
+          class="px-5 py-2.5 rounded-full bg-slate-950 hover:bg-black text-white text-xs sm:text-sm font-semibold shadow-md shadow-slate-900/10 transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
           <span>Launch Studio</span>
           <span class="text-xs">&rarr;</span>
         </a>
@@ -136,44 +153,52 @@
   <!-- 2. HERO SECTION SCROLLTELLING (240 FRAMES CLEAN CANVAS) -->
   <!-- ========================================================================= -->
   <section id="hero-scroll-container" class="relative w-full h-[400vh] bg-[#fbf9f5]">
-    
+
     <!-- STICKY VIEWPORT CONTAINER -->
     <div class="sticky top-0 w-full h-screen overflow-hidden flex items-center justify-center">
-      
+
       <!-- LAYER 1: 240-FRAME VIDEO CANVAS SCROLLER -->
       <canvas id="hero-frames-canvas" class="absolute inset-0 w-full h-full object-cover"></canvas>
 
       <!-- LAYER 2: SKY BLEND OVERLAY TRANSITION (FRAME 230-240) -->
-      <div id="hero-sky-transition" class="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300 bg-gradient-to-b from-transparent via-[#dbeefd]/30 to-[#eaf4fd] z-20"></div>
+      <div id="hero-sky-transition"
+        class="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-300 bg-gradient-to-b from-transparent via-[#dbeefd]/30 to-[#eaf4fd] z-20">
+      </div>
 
       <!-- ===================================================================== -->
       <!-- OVERLAY COPY BEAT 1 (0% to 22%): "Capture every frame. Perfectly." -->
       <!-- ===================================================================== -->
-      <div id="hero-beat-1" class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 transition-all duration-200">
-        
+      <div id="hero-beat-1"
+        class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 transition-all duration-200">
+
         <!-- SOCIAL PROOF / VALUE BADGE -->
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 text-xs font-medium text-slate-800 mb-6 hover:bg-white transition-all cursor-pointer">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 text-xs font-medium text-slate-800 mb-6 hover:bg-white transition-all cursor-pointer">
           <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
           <span>⚡ 24 FPS Extractor • AI Matting • PDF Digitizer</span>
         </div>
 
         <!-- MAIN HEADLINE -->
-        <h1 class="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight text-slate-950 mb-4 drop-shadow-sm font-sans">
+        <h1
+          class="text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tight text-slate-950 mb-4 drop-shadow-sm font-sans">
           Capture every frame. Perfectly.
         </h1>
 
         <!-- SUB-HEADLINE -->
         <p class="text-base sm:text-xl text-slate-800 font-normal max-w-xl mx-auto mb-8 leading-relaxed">
-          High-speed 24 FPS frame extraction, perfect AI background removal, and seamless image-to-PDF scanning. Crafted for creators.
+          High-speed 24 FPS frame extraction, perfect AI background removal, and seamless image-to-PDF scanning. Crafted
+          for creators.
         </p>
 
         <!-- DUAL CTAs -->
         <div class="flex items-center justify-center gap-4">
-          <a href="/studio.html" class="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-900 font-semibold text-sm shadow-xl shadow-black/5 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-slate-200/50">
+          <a href="/studio.html"
+            class="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-900 font-semibold text-sm shadow-xl shadow-black/5 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 border border-slate-200/50">
             <span>Get Started Free</span>
             <span class="text-base">→</span>
           </a>
-          <button onclick="document.getElementById('hero-scroll-indicator').click()" class="px-5 py-3.5 text-slate-900 font-semibold text-sm hover:text-amber-700 transition-colors flex items-center gap-1.5">
+          <button onclick="document.getElementById('hero-scroll-indicator').click()"
+            class="px-5 py-3.5 text-slate-900 font-semibold text-sm hover:text-amber-700 transition-colors flex items-center gap-1.5">
             <span>Watch Demo ▷</span>
           </button>
         </div>
@@ -184,22 +209,27 @@
       <!-- ===================================================================== -->
       <!-- OVERLAY COPY BEAT 2 (30% to 62%): "240 frames in under 2 seconds" -->
       <!-- ===================================================================== -->
-      <div id="hero-beat-2" class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 opacity-0 pointer-events-none transition-all duration-200">
-        
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 text-xs font-semibold text-amber-700 mb-6">
+      <div id="hero-beat-2"
+        class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 opacity-0 pointer-events-none transition-all duration-200">
+
+        <div
+          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 text-xs font-semibold text-amber-700 mb-6">
           <span>🎬 Multi-Threaded FFmpeg Engine</span>
         </div>
 
-        <h2 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-950 mb-4 drop-shadow-sm font-sans max-w-4xl">
+        <h2
+          class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-950 mb-4 drop-shadow-sm font-sans max-w-4xl">
           240 frames extracted in under 2 seconds.
         </h2>
 
         <p class="text-base sm:text-xl text-slate-800 font-normal max-w-2xl mx-auto mb-8 leading-relaxed">
-          Extract high-density 24 FPS image sequences from short videos with multi-threaded performance, real-time scrubber playback, and instant lossless ZIP archive downloads.
+          Extract high-density 24 FPS image sequences from short videos with multi-threaded performance, real-time
+          scrubber playback, and instant lossless ZIP archive downloads.
         </p>
 
         <div class="flex items-center justify-center gap-4">
-          <a href="/studio.html" class="px-7 py-3.5 rounded-full bg-slate-950 hover:bg-black text-white font-semibold text-sm shadow-xl hover:scale-105 transition-all flex items-center gap-2">
+          <a href="/studio.html"
+            class="px-7 py-3.5 rounded-full bg-slate-950 hover:bg-black text-white font-semibold text-sm shadow-xl hover:scale-105 transition-all flex items-center gap-2">
             <span>Open Frame Extractor ✦</span>
           </a>
         </div>
@@ -210,22 +240,27 @@
       <!-- ===================================================================== -->
       <!-- OVERLAY COPY BEAT 3 (68% to 94%): "Surgical AI background removal" -->
       <!-- ===================================================================== -->
-      <div id="hero-beat-3" class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 opacity-0 pointer-events-none transition-all duration-200">
-        
-        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 text-xs font-semibold text-sky-700 mb-6">
+      <div id="hero-beat-3"
+        class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 z-30 opacity-0 pointer-events-none transition-all duration-200">
+
+        <div
+          class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 text-xs font-semibold text-sky-700 mb-6">
           <span>✨ 4-Stage Alpha Refinement</span>
         </div>
 
-        <h2 class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-950 mb-4 drop-shadow-sm font-sans max-w-4xl">
+        <h2
+          class="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-slate-950 mb-4 drop-shadow-sm font-sans max-w-4xl">
           Surgical AI background removal.
         </h2>
 
         <p class="text-base sm:text-xl text-slate-800 font-normal max-w-2xl mx-auto mb-8 leading-relaxed">
-          Isolate subjects with sub-pixel edge smoothing, morphological hole closure, and light garment recovery. Zero halo, pure alpha transparency.
+          Isolate subjects with sub-pixel edge smoothing, morphological hole closure, and light garment recovery. Zero
+          halo, pure alpha transparency.
         </p>
 
         <div class="flex items-center justify-center gap-4">
-          <a href="/studio.html" class="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-900 font-semibold text-sm shadow-xl hover:scale-105 transition-all flex items-center gap-2 border border-slate-200/60">
+          <a href="/studio.html"
+            class="px-7 py-3.5 rounded-full bg-white hover:bg-slate-50 text-slate-900 font-semibold text-sm shadow-xl hover:scale-105 transition-all flex items-center gap-2 border border-slate-200/60">
             <span>Try AI Matting &rarr;</span>
           </a>
         </div>
@@ -234,7 +269,8 @@
 
 
       <!-- BOTTOM SCROLL INDICATOR -->
-      <button id="hero-scroll-indicator" class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-[11px] font-mono tracking-wider uppercase shadow-lg border border-white/10 flex items-center gap-2 cursor-pointer transition-all hover:scale-105">
+      <button id="hero-scroll-indicator"
+        class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 px-4 py-2 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md text-white text-[11px] font-mono tracking-wider uppercase shadow-lg border border-white/10 flex items-center gap-2 cursor-pointer transition-all hover:scale-105">
         <span class="animate-pulse">SCROLL</span>
         <span class="text-xs">&darr;</span>
       </button>
@@ -247,17 +283,20 @@
   <!-- ========================================================================= -->
   <!-- 3. SECTION 2: CREATOR & MASCOT SHOWCASE (INSPIRED BY REFERENCE HEADER) -->
   <!-- ========================================================================= -->
-  <section id="overview" class="relative bg-gradient-to-b from-[#eaf4fd] via-[#f8fafc] to-[#fbf9f5] py-20 px-4 sm:px-6 lg:px-8 border-t border-sky-100/50">
+  <section id="overview"
+    class="relative bg-gradient-to-b from-[#eaf4fd] via-[#f8fafc] to-[#fbf9f5] py-20 px-4 sm:px-6 lg:px-8 border-t border-sky-100/50">
     <div class="max-w-6xl mx-auto">
-      
+
       <!-- HERO SHOWCASE CARD -->
-      <div class="bg-white rounded-[2.5rem] p-8 sm:p-12 lg:p-16 shadow-2xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden">
-        
+      <div
+        class="bg-white rounded-[2.5rem] p-8 sm:p-12 lg:p-16 shadow-2xl shadow-slate-200/50 border border-slate-100 relative overflow-hidden">
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          
+
           <!-- LEFT COPY & CTAs -->
           <div class="lg:col-span-7 space-y-6">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-800 text-xs font-semibold uppercase tracking-wider">
+            <div
+              class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-800 text-xs font-semibold uppercase tracking-wider">
               ✦ Next-Gen Media Engine
             </div>
 
@@ -266,11 +305,13 @@
             </h2>
 
             <p class="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl">
-              Extract 24 FPS sequences from short videos, remove backgrounds with sub-pixel alpha precision, and digitize clean PDF documents in one seamless workspace.
+              Extract 24 FPS sequences from short videos, remove backgrounds with sub-pixel alpha precision, and
+              digitize clean PDF documents in one seamless workspace.
             </p>
 
             <div class="flex flex-wrap items-center gap-4 pt-2">
-              <a href="/studio.html" class="px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+              <a href="/studio.html"
+                class="px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm shadow-xl shadow-blue-500/25 hover:shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
                 <span>Select Workspace</span>
                 <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs">&rarr;</span>
               </a>
@@ -283,18 +324,22 @@
 
           <!-- RIGHT CREATIVE CARD WITH MASCOT INTEGRATION -->
           <div class="lg:col-span-5 relative flex justify-center">
-            
+
             <!-- CREATIVE PHOTO CONTAINER WITH GREEN ACCENT -->
-            <div class="relative w-full max-w-[340px] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100">
-              
+            <div
+              class="relative w-full max-w-[340px] aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100">
+
               <!-- GREEN GRAPHIC ACCENT FLUID RIBBON -->
-              <div class="absolute -top-10 -right-10 w-44 h-44 bg-[#a3e635] rounded-full filter blur-2xl opacity-60 pointer-events-none"></div>
+              <div
+                class="absolute -top-10 -right-10 w-44 h-44 bg-[#a3e635] rounded-full filter blur-2xl opacity-60 pointer-events-none">
+              </div>
 
               <!-- PHOTO -->
               <img src="/assets/frames/frame_0001.jpg" alt="Alpine Landscape" class="w-full h-full object-cover" />
 
               <!-- FLOATING TOP SPEECH PILL -->
-              <div class="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-lg border border-slate-100 text-xs text-slate-800 leading-snug">
+              <div
+                class="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-lg border border-slate-100 text-xs text-slate-800 leading-snug">
                 <p class="font-semibold text-slate-950">⚡ Instant 24 FPS Extraction</p>
                 <p class="text-[11px] text-slate-500 mt-0.5">Parse 240 frames in 1.7s with zero lag.</p>
               </div>
@@ -316,6 +361,7 @@
   </section>
 
 
+  <!-- ========================================================================= -->
   <!-- ========================================================================= -->
   <!-- 4. SECTION 3: 3D AQUATIC DEEP BLUE FLUID CONTAINER WITH 3D MODELS -->
   <!-- ========================================================================= -->
@@ -352,9 +398,11 @@
 
         <!-- 4 PAPER-CLIP PINNED 3D CARDS GRID -->
         <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
-          
+
           <!-- CARD 1: 24 FPS EXTRACTOR (CINEMA CLAPPERBOARD) -->
-          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-2xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div
+            class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-2xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer"
+            onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
 
             <!-- COMPACT TOP 3D PAPERCLIP PIN -->
@@ -369,17 +417,21 @@
 
             <!-- 3D PROCEDURAL CINEMA CLAPPERBOARD (img2threejs) -->
             <div class="my-2 flex items-center justify-center h-28 relative">
-              <canvas id="canvas-clapperboard" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
+              <canvas id="canvas-clapperboard" width="120" height="120"
+                class="w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">240 frames</span>
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">240
+                frames</span>
               <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
             </div>
           </div>
 
           <!-- CARD 2: AI BACKGROUND MATTING (PURPLE SCISSORS) -->
-          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div
+            class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer"
+            onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
 
             <!-- COMPACT TOP 3D PAPERCLIP PIN -->
@@ -398,13 +450,16 @@
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Pure Alpha</span>
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Pure
+                Alpha</span>
               <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
             </div>
           </div>
 
           <!-- CARD 3: SMART PDF DIGITIZER (CURLED PAPER SHEET) -->
-          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div
+            class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer"
+            onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
 
             <!-- COMPACT TOP 3D PAPERCLIP PIN -->
@@ -419,17 +474,21 @@
 
             <!-- 3D PROCEDURAL CURLED PAPER SHEET (img2threejs) -->
             <div class="my-2 flex items-center justify-center h-28 relative">
-              <canvas id="canvas-curled-paper" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
+              <canvas id="canvas-curled-paper" width="120" height="120"
+                class="w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Multi-Page</span>
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Multi-Page</span>
               <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
             </div>
           </div>
 
           <!-- CARD 4: PROCEDURAL THREE.JS CODE (RED RUBY DICE) -->
-          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div
+            class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer"
+            onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
 
             <!-- COMPACT TOP 3D PAPERCLIP PIN -->
@@ -439,7 +498,8 @@
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Procedural 3D Code</h3>
-              <p class="text-xs text-slate-500 leading-relaxed">Three.js models in pure code with zero GLB asset bloat.</p>
+              <p class="text-xs text-slate-500 leading-relaxed">Three.js models in pure code with zero GLB asset bloat.
+              </p>
             </div>
 
             <!-- 3D PROCEDURAL RED RUBY DICE (img2threejs) -->
@@ -448,7 +508,8 @@
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">img2threejs</span>
+              <span
+                class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">img2threejs</span>
               <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
             </div>
           </div>
@@ -465,44 +526,55 @@
   <!-- 5. SECTION 4: PRODUCTION MODULES GRID (WITH LIQUID OVERFLOW EFFECT) -->
   <!-- ========================================================================= -->
   <section id="modules" class="relative py-20 px-4 sm:px-6 lg:px-8 bg-[#fbf9f5] overflow-hidden">
-    
+
     <!-- LIQUID OVERFLOW TRANSITION OVERLAY FROM SECTION 3 -->
-    <div id="fluid-overflow-overlay" class="absolute inset-x-0 top-0 h-[480px] bg-gradient-to-b from-blue-600/25 via-sky-300/10 to-transparent pointer-events-none opacity-0 transition-all duration-500 z-0"></div>
+    <div id="fluid-overflow-overlay"
+      class="absolute inset-x-0 top-0 h-[480px] bg-gradient-to-b from-blue-600/25 via-sky-300/10 to-transparent pointer-events-none opacity-0 transition-all duration-500 z-0">
+    </div>
 
     <div class="relative z-10 max-w-6xl mx-auto">
-      
+
       <!-- SECTION HEADER -->
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
         <div>
-          <span class="text-blue-600 text-xs font-bold uppercase tracking-widest block mb-2 font-mono">✦ WORKSPACE SUITE</span>
+          <span class="text-blue-600 text-xs font-bold uppercase tracking-widest block mb-2 font-mono">✦ WORKSPACE
+            SUITE</span>
           <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-950 tracking-tight">
             Production Modules & Tools
           </h2>
         </div>
 
-        <a href="/studio.html" class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-blue-600 transition-colors uppercase tracking-wider">
+        <a href="/studio.html"
+          class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-blue-600 transition-colors uppercase tracking-wider">
           <span>+ Open Full Studio Suite</span>
         </a>
       </div>
 
       <!-- 3 RICH PRODUCTION CARDS GRID -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        
+
         <!-- MODULE CARD 1: 8S FRAME EXTRACTION -->
-        <div class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
+        <div
+          class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
           <div class="card-shine"></div>
 
           <div>
             <!-- CARD TOP BANNER WITH BADGES -->
-            <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
-              <img src="/assets/frames/frame_0080.jpg" alt="Frame Extraction Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              
+            <div
+              class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
+              <img src="/assets/frames/frame_0080.jpg" alt="Frame Extraction Preview"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+
               <!-- TOP PILLS -->
               <div class="absolute top-3 left-3 flex items-center gap-1.5">
-                <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">Free</span>
-                <span class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">24 FPS</span>
+                <span
+                  class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">Free</span>
+                <span class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">24
+                  FPS</span>
               </div>
-              <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-amber-500 text-white font-bold text-[10px]">Hot 🔥</span>
+              <span
+                class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-amber-500 text-white font-bold text-[10px]">Hot
+                🔥</span>
             </div>
 
             <!-- TITLE & RATING -->
@@ -528,7 +600,8 @@
               <span class="text-slate-400 block text-[10px]">SPEED</span>
               <span class="font-bold text-slate-800">1.72s / 192f</span>
             </div>
-            <a href="/studio.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
+            <a href="/studio.html"
+              class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
               <span>Open Tool</span>
               <span>&rarr;</span>
             </a>
@@ -536,18 +609,26 @@
         </div>
 
         <!-- MODULE CARD 2: 4-STAGE AI MATTING -->
-        <div class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
+        <div
+          class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
           <div class="card-shine"></div>
 
           <div>
-            <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
-              <img src="/assets/frames/frame_0150.jpg" alt="AI Matting Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              
+            <div
+              class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
+              <img src="/assets/frames/frame_0150.jpg" alt="AI Matting Preview"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+
               <div class="absolute top-3 left-3 flex items-center gap-1.5">
-                <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">AI Neural</span>
-                <span class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">Alpha PNG</span>
+                <span
+                  class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">AI
+                  Neural</span>
+                <span
+                  class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">Alpha
+                  PNG</span>
               </div>
-              <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-purple-600 text-white font-bold text-[10px]">Sub-Pixel</span>
+              <span
+                class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-purple-600 text-white font-bold text-[10px]">Sub-Pixel</span>
             </div>
 
             <h3 class="font-bold text-lg text-slate-950 mb-2 leading-snug">
@@ -559,8 +640,10 @@
             </div>
 
             <div class="flex flex-wrap gap-1.5 mb-6">
-              <span class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 font-mono text-[11px]">#MorphologicalClose</span>
-              <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-mono text-[11px]">#HairlinePreserve</span>
+              <span
+                class="px-2.5 py-1 rounded-lg bg-purple-50 text-purple-700 font-mono text-[11px]">#MorphologicalClose</span>
+              <span
+                class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-mono text-[11px]">#HairlinePreserve</span>
               <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-mono text-[11px]">#SplitView</span>
             </div>
           </div>
@@ -570,7 +653,8 @@
               <span class="text-slate-400 block text-[10px]">ACCURACY</span>
               <span class="font-bold text-slate-800">4-Stage Filter</span>
             </div>
-            <a href="/studio.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
+            <a href="/studio.html"
+              class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
               <span>Open Tool</span>
               <span>&rarr;</span>
             </a>
@@ -578,18 +662,25 @@
         </div>
 
         <!-- MODULE CARD 3: PDF SCANNER & COMPILER -->
-        <div class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
+        <div
+          class="card-3d-tilt bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 flex flex-col justify-between group">
           <div class="card-shine"></div>
 
           <div>
-            <div class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
-              <img src="/assets/frames/frame_0210.jpg" alt="PDF Scanner Preview" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              
+            <div
+              class="relative aspect-[16/10] rounded-2xl overflow-hidden bg-slate-900 mb-6 flex items-center justify-center">
+              <img src="/assets/frames/frame_0210.jpg" alt="PDF Scanner Preview"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+
               <div class="absolute top-3 left-3 flex items-center gap-1.5">
-                <span class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">Document</span>
-                <span class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">pdf-lib</span>
+                <span
+                  class="px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-slate-900 font-bold text-[10px]">Document</span>
+                <span
+                  class="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-white font-mono text-[10px]">pdf-lib</span>
               </div>
-              <span class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-emerald-600 text-white font-bold text-[10px]">Vector Ready</span>
+              <span
+                class="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-emerald-600 text-white font-bold text-[10px]">Vector
+                Ready</span>
             </div>
 
             <h3 class="font-bold text-lg text-slate-950 mb-2 leading-snug">
@@ -601,7 +692,8 @@
             </div>
 
             <div class="flex flex-wrap gap-1.5 mb-6">
-              <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-mono text-[11px]">#CleanScanB&W</span>
+              <span
+                class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-mono text-[11px]">#CleanScanB&W</span>
               <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 font-mono text-[11px]">#DragAndDrop</span>
               <span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-mono text-[11px]">#A4Letter</span>
             </div>
@@ -612,7 +704,8 @@
               <span class="text-slate-400 block text-[10px]">FORMAT</span>
               <span class="font-bold text-slate-800">A4 • Letter • Fit</span>
             </div>
-            <a href="/studio.html" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
+            <a href="/studio.html"
+              class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md shadow-blue-500/20 transition-all flex items-center gap-1.5">
               <span>Open Tool</span>
               <span>&rarr;</span>
             </a>
@@ -629,25 +722,30 @@
   <!-- 6. SECTION 5: MASCOT INTERACTIVE CALLOUT & TEST TRIGGER -->
   <!-- ========================================================================= -->
   <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[#fbf9f5] to-white border-t border-slate-200/60">
-    <div class="max-w-4xl mx-auto bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-slate-200/70 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
-      
+    <div
+      class="max-w-4xl mx-auto bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-slate-200/70 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+
       <!-- MASCOT FIGURE -->
       <div class="w-36 h-36 shrink-0 relative animate-mascot-float">
-        <img src="/assets/mascote.png" alt="FramerTool Mascot" class="w-full h-full object-contain filter drop-shadow-lg" />
+        <img src="/assets/mascote.png" alt="FramerTool Mascot"
+          class="w-full h-full object-contain filter drop-shadow-lg" />
       </div>
 
       <!-- COPY & BUTTONS -->
       <div class="flex-1 text-center md:text-left space-y-3">
-        <span class="text-amber-600 font-mono text-xs font-bold uppercase tracking-wider">⚡ Ready to test right now?</span>
+        <span class="text-amber-600 font-mono text-xs font-bold uppercase tracking-wider">⚡ Ready to test right
+          now?</span>
         <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-950">
           Try the 8-second synthetic test video.
         </h3>
         <p class="text-slate-600 text-sm leading-relaxed">
-          See how 192 frames are extracted in under 2 seconds and test our AI background removal and PDF scanner without uploading your own files.
+          See how 192 frames are extracted in under 2 seconds and test our AI background removal and PDF scanner without
+          uploading your own files.
         </p>
 
         <div class="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
-          <a href="/studio.html" class="px-6 py-3 rounded-full bg-slate-950 hover:bg-black text-white font-semibold text-xs shadow-lg hover:scale-105 transition-all flex items-center gap-2">
+          <a href="/studio.html"
+            class="px-6 py-3 rounded-full bg-slate-950 hover:bg-black text-white font-semibold text-xs shadow-lg hover:scale-105 transition-all flex items-center gap-2">
             <span>Launch Studio Suite</span>
             <span>&rarr;</span>
           </a>
@@ -663,7 +761,7 @@
   <!-- ========================================================================= -->
   <footer class="bg-white border-t border-slate-200/70 py-12 text-xs text-slate-500">
     <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6">
-      
+
       <div class="flex items-center gap-2.5">
         <div class="w-6 h-6 rounded-full bg-slate-950 flex items-center justify-center text-white text-[10px]">⚡</div>
         <span class="font-bold text-slate-950 text-sm">FramerTool Studio</span>
@@ -691,4 +789,5 @@
     lucide.createIcons();
   </script>
 </body>
+
 </html>
