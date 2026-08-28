@@ -1,0 +1,39 @@
+{
+  "name": "media-studio-suite",
+  "version": "1.0.0",
+  "description": "Media Studio Suite: Extrator de Frames 24fps, Removedor de Fundo IA e Digitalizador de Imagens para PDF",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test:video": "node src/services/ffmpegService.js --test"
+  },
+  "keywords": [
+    "ffmpeg",
+    "frames",
+    "24fps",
+    "background-removal",
+    "ai",
+    "scanner",
+    "pdf",
+    "easypanel",
+    "docker"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
+    "archiver": "^7.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "fluent-ffmpeg": "^2.1.3",
+    "fs-extra": "^11.3.0",
+    "jimp": "^1.6.0",
+    "multer": "^1.4.5-lts.1",
+    "p-limit": "^6.2.0",
+    "pdf-lib": "^1.17.1",
+    "sharp": "^0.33.5"
+  }
+}
