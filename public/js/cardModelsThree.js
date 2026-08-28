@@ -95,7 +95,6 @@ export function createPaperclipMesh(colorHex = 0x0284c7) {
   group.add(new THREE.Mesh(capStartGeo, mat));
   group.add(new THREE.Mesh(capEndGeo, mat));
 
-  // Inclinação clássica do clipe prendendo a folha
   group.rotation.z = -0.35;
   return group;
 }
@@ -106,7 +105,6 @@ export function createPaperclipMesh(colorHex = 0x0284c7) {
 export function createClapperboardModel() {
   const group = new THREE.Group();
 
-  // Striped texture generator for clapper sticks
   const makeStripedTexture = () => {
     const canvas = document.createElement('canvas');
     canvas.width = 256;
@@ -159,7 +157,7 @@ export function createClapperboardModel() {
 
   // Top Hinged Clapper Stick
   const topStickGroup = new THREE.Group();
-  topStickGroup.position.set(-1.0, 0.58, 0.02); // Pivot on the left hinge
+  topStickGroup.position.set(-1.0, 0.58, 0.02);
 
   const topStickGeo = new THREE.BoxGeometry(2.15, 0.32, 0.2);
   const topStickMesh = new THREE.Mesh(topStickGeo, stripedMat);
@@ -173,8 +171,7 @@ export function createClapperboardModel() {
   hingeMesh.rotation.x = Math.PI / 2;
   topStickGroup.add(hingeMesh);
 
-  // Initial Open Angle
-  topStickGroup.rotation.z = 0.38; // ~22 degrees open
+  topStickGroup.rotation.z = 0.38;
   group.add(topStickGroup);
 
   group.userData = { topStick: topStickGroup };
@@ -189,7 +186,7 @@ export function createScissorsModel() {
   const group = new THREE.Group();
 
   const handleMat = new THREE.MeshPhysicalMaterial({
-    color: 0xa855f7, // Lilac / Purple
+    color: 0xa855f7,
     roughness: 0.18,
     metalness: 0.08,
     clearcoat: 0.85,
@@ -205,16 +202,14 @@ export function createScissorsModel() {
   });
 
   const pinMat = new THREE.MeshStandardMaterial({
-    color: 0xeab308, // Gold hinge pin
+    color: 0xeab308,
     metalness: 0.9,
     roughness: 0.2,
   });
 
-  // Helper to create a single scissor blade half (Handle loop + Steel blade)
   const makeHalf = (isLeft) => {
     const halfGroup = new THREE.Group();
 
-    // 1. Steel Blade
     const bladeShape = new THREE.Shape();
     bladeShape.moveTo(0, 0);
     bladeShape.lineTo(0.24, 0);
@@ -228,14 +223,12 @@ export function createScissorsModel() {
     bladeMesh.position.set(-0.1, 0, isLeft ? 0.03 : -0.09);
     halfGroup.add(bladeMesh);
 
-    // 2. Purple Handle Ring Loop
     const handleRingGeo = new THREE.TorusGeometry(0.48, 0.14, 16, 32);
     const handleRingMesh = new THREE.Mesh(handleRingGeo, handleMat);
     handleRingMesh.position.set(0.35, -0.85, 0);
     handleRingMesh.rotation.z = -0.2;
     halfGroup.add(handleRingMesh);
 
-    // Connecting Bridge
     const bridgeGeo = new THREE.CylinderGeometry(0.16, 0.18, 0.6, 16);
     const bridgeMesh = new THREE.Mesh(bridgeGeo, handleMat);
     bridgeMesh.position.set(0.18, -0.4, 0);
@@ -246,15 +239,14 @@ export function createScissorsModel() {
   };
 
   const leftHalf = makeHalf(true);
-  leftHalf.rotation.z = 0.25; // Open angle
+  leftHalf.rotation.z = 0.25;
   group.add(leftHalf);
 
   const rightHalf = makeHalf(false);
   rightHalf.scale.x = -1;
-  rightHalf.rotation.z = -0.25; // Open angle
+  rightHalf.rotation.z = -0.25;
   group.add(rightHalf);
 
-  // Center Gold Hinge Pin
   const centerPinGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.24, 24);
   const centerPinMesh = new THREE.Mesh(centerPinGeo, pinMat);
   centerPinMesh.rotation.x = Math.PI / 2;
@@ -286,13 +278,12 @@ export function createCurledPaperModel() {
     side: THREE.DoubleSide,
   });
 
-  // Base Document Sheet with top-left notch
   const paperShape = new THREE.Shape();
   paperShape.moveTo(-0.8, -1.3);
   paperShape.lineTo(0.9, -1.3);
   paperShape.lineTo(0.9, 1.3);
   paperShape.lineTo(-0.25, 1.3);
-  paperShape.lineTo(-0.8, 0.75); // Cutout for curled fold
+  paperShape.lineTo(-0.8, 0.75);
   paperShape.closePath();
 
   const extrudeSettings = { depth: 0.04, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.015, bevelThickness: 0.015 };
@@ -300,7 +291,6 @@ export function createCurledPaperModel() {
   const paperMesh = new THREE.Mesh(paperGeo, paperMat);
   group.add(paperMesh);
 
-  // 3D Curled Folded Corner (Curved triangle in top-left)
   const foldGroup = new THREE.Group();
   foldGroup.position.set(-0.52, 1.02, 0.06);
 
@@ -313,12 +303,11 @@ export function createCurledPaperModel() {
   const foldGeo = new THREE.ExtrudeGeometry(foldShape, { depth: 0.03, bevelEnabled: true, bevelSize: 0.01, bevelThickness: 0.01 });
   const foldMesh = new THREE.Mesh(foldGeo, foldUnderMat);
   foldMesh.rotation.z = -Math.PI / 4;
-  foldMesh.rotation.y = -0.35; // Dimensional lift from page
+  foldMesh.rotation.y = -0.35;
   foldGroup.add(foldMesh);
 
   group.add(foldGroup);
 
-  // Subtle simulated printed lines on the document
   const lineMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8 });
   for (let y = 0.4; y >= -1.0; y -= 0.25) {
     const lineGeo = new THREE.BoxGeometry(1.2, 0.04, 0.01);
@@ -337,15 +326,17 @@ export function createCurledPaperModel() {
 export function createRedDiceModel() {
   const group = new THREE.Group();
 
-  // 1. Ruby Red Glass Material
+  // 1. Ruby Red Glass Material with Vibrant Refraction
   const glassMat = new THREE.MeshPhysicalMaterial({
-    color: 0xef4444, // Vibrant Red Ruby
-    transmission: 0.90,
+    color: 0xef4444,
+    emissive: 0x991b1b,
+    emissiveIntensity: 0.25,
+    transmission: 0.85,
     opacity: 0.96,
     transparent: true,
     roughness: 0.06,
     ior: 1.54,
-    thickness: 1.4,
+    thickness: 1.5,
     reflectivity: 0.9,
     clearcoat: 1.0,
     clearcoatRoughness: 0.05,
@@ -353,20 +344,21 @@ export function createRedDiceModel() {
     attenuationDistance: 0.8,
   });
 
-  // Base Cube with bevel
   const cubeGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5, 8, 8, 8);
   const cubeMesh = new THREE.Mesh(cubeGeo, glassMat);
   group.add(cubeMesh);
 
-  // 2. White Inset Pips (Dots)
+  // 2. Crisp White Inset Pips
   const pipMat = new THREE.MeshStandardMaterial({
     color: 0xffffff,
-    roughness: 0.2,
-    metalness: 0.1,
+    emissive: 0xffffff,
+    emissiveIntensity: 0.4,
+    roughness: 0.15,
+    metalness: 0.05,
   });
 
   const pipGeo = new THREE.SphereGeometry(0.12, 16, 16);
-  pipGeo.scale(1, 1, 0.4); // Flattened dome
+  pipGeo.scale(1, 1, 0.4);
 
   const addPip = (x, y, z, rotX = 0, rotY = 0) => {
     const pip = new THREE.Mesh(pipGeo, pipMat);
@@ -378,10 +370,10 @@ export function createRedDiceModel() {
   const d = 0.38;
   const o = 0.76;
 
-  // Face 1 (Front: +Z) -> 1 pip
+  // Face 1 (Front: +Z)
   addPip(0, 0, o);
 
-  // Face 6 (Back: -Z) -> 6 pips
+  // Face 6 (Back: -Z)
   addPip(-d, -d, -o, 0, Math.PI);
   addPip(-d, 0, -o, 0, Math.PI);
   addPip(-d, d, -o, 0, Math.PI);
@@ -389,31 +381,30 @@ export function createRedDiceModel() {
   addPip(d, 0, -o, 0, Math.PI);
   addPip(d, d, -o, 0, Math.PI);
 
-  // Face 2 (Top: +Y) -> 2 pips
+  // Face 2 (Top: +Y)
   addPip(-d, o, -d, -Math.PI / 2, 0);
   addPip(d, o, d, -Math.PI / 2, 0);
 
-  // Face 5 (Bottom: -Y) -> 5 pips
+  // Face 5 (Bottom: -Y)
   addPip(0, -o, 0, Math.PI / 2, 0);
   addPip(-d, -o, -d, Math.PI / 2, 0);
   addPip(-d, -o, d, Math.PI / 2, 0);
   addPip(d, -o, -d, Math.PI / 2, 0);
   addPip(d, -o, d, Math.PI / 2, 0);
 
-  // Face 3 (Right: +X) -> 3 pips
+  // Face 3 (Right: +X)
   addPip(o, -d, -d, 0, Math.PI / 2);
   addPip(o, 0, 0, 0, Math.PI / 2);
   addPip(o, d, d, 0, Math.PI / 2);
 
-  // Face 4 (Left: -X) -> 4 pips
+  // Face 4 (Left: -X)
   addPip(-o, -d, -d, 0, -Math.PI / 2);
   addPip(-o, -d, d, 0, -Math.PI / 2);
   addPip(-o, d, -d, 0, -Math.PI / 2);
   addPip(-o, d, d, 0, -Math.PI / 2);
 
-  // Dynamic Isometric Tilt as seen in reference photo
   group.rotation.set(0.55, 0.65, -0.2);
-  group.scale.setScalar(0.9);
+  group.scale.setScalar(0.92);
   return group;
 }
 
@@ -440,8 +431,8 @@ export class Card3DViewer {
   init() {
     this.scene = new THREE.Scene();
 
-    const w = this.canvas.clientWidth || 100;
-    const h = this.canvas.clientHeight || 100;
+    const w = this.canvas.clientWidth || this.canvas.width || 120;
+    const h = this.canvas.clientHeight || this.canvas.height || 120;
 
     this.camera = new THREE.PerspectiveCamera(38, w / h, 0.1, 100);
     this.camera.position.z = this.options.isPaperclipPin ? 5.2 : 5.8;
@@ -525,17 +516,14 @@ export class Card3DViewer {
 
     if (this.model) {
       if (this.options.isPaperclipPin) {
-        // Small Top Paperclip Pin Reaction
         const baseZ = -0.35;
         this.model.rotation.z = baseZ + (this.isHovered ? this.mouseX * 0.2 : Math.sin(elapsedTime * 1.5) * 0.03);
         this.model.rotation.y = this.isHovered ? this.mouseX * 0.3 : 0;
       } else {
-        // Main 3D Card Elements Reaction
         switch (this.modelType) {
           case 'clapperboard':
             this.model.rotation.y = this.mouseX * 0.5 + Math.sin(elapsedTime * 1.2) * 0.08;
             this.model.rotation.x = -this.mouseY * 0.4 + 0.1;
-            // Clapper clap micro-animation on hover
             if (this.model.userData.topStick) {
               const clapAngle = this.isHovered ? 0.15 + Math.sin(elapsedTime * 6) * 0.12 : 0.38;
               this.model.userData.topStick.rotation.z += (clapAngle - this.model.userData.topStick.rotation.z) * 0.2;
@@ -545,7 +533,6 @@ export class Card3DViewer {
           case 'scissors':
             this.model.rotation.y = this.mouseX * 0.6 + Math.sin(elapsedTime * 1.5) * 0.1;
             this.model.rotation.x = -this.mouseY * 0.5;
-            // Scissors snip micro-animation on hover
             if (this.model.userData.leftHalf && this.model.userData.rightHalf) {
               const snipAngle = this.isHovered ? 0.12 + Math.sin(elapsedTime * 8) * 0.15 : 0.25;
               this.model.userData.leftHalf.rotation.z = snipAngle;
@@ -560,7 +547,6 @@ export class Card3DViewer {
             break;
 
           case 'red_dice':
-            // Continuous tumbling ruby dice + mouse parallax
             this.model.rotation.x += delta * (this.isHovered ? 1.8 : 0.5);
             this.model.rotation.y += delta * (this.isHovered ? 2.2 : 0.6);
             this.model.rotation.z = this.mouseX * 0.6;
@@ -574,7 +560,6 @@ export class Card3DViewer {
 }
 
 export function initPipeline3DModels() {
-  // 1. Inicializa os 4 modelos centrais dos cards
   const cardElements = [
     { id: 'canvas-clapperboard', type: 'clapperboard' },
     { id: 'canvas-scissors', type: 'scissors' },
@@ -589,7 +574,6 @@ export function initPipeline3DModels() {
     }
   });
 
-  // 2. Inicializa os clipes 3D pequenos posicionados no topo dos cards (paperclip pin)
   const pinCanvases = document.querySelectorAll('.paperclip-pin-canvas');
   pinCanvases.forEach((canvas) => {
     new Card3DViewer(canvas, 'paperclip', { isPaperclipPin: true });
