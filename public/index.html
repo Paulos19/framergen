@@ -317,130 +317,142 @@
 
 
   <!-- ========================================================================= -->
-  <!-- 4. SECTION 3: 3D ORGANIC AQUATIC FLUID POOL (NO RECTANGULAR WALLS) -->
+  <!-- 4. SECTION 3: 3D AQUATIC DEEP BLUE FLUID CONTAINER WITH 3D MODELS -->
   <!-- ========================================================================= -->
-  <section id="engines" class="relative pt-24 pb-28 px-4 sm:px-6 lg:px-8 overflow-visible">
-    
-    <!-- HIGH PERFORMANCE FLUID SURFACE & DROPLET CANVAS (ORGANIC PUDDLE SHAPE) -->
-    <canvas id="fluid-engines-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-0"></canvas>
-
-    <div class="relative z-10 max-w-6xl mx-auto">
+  <section id="engines" class="relative pt-36 sm:pt-44 lg:pt-48 pb-20 px-4 sm:px-6 lg:px-8 scroll-mt-28">
+    <div class="max-w-6xl mx-auto">
       
-      <!-- HEADER -->
-      <div class="max-w-2xl mb-14 pt-8">
-        <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-sky-100 text-xs font-bold uppercase tracking-wider font-mono mb-3 shadow-inner">
-          <span>✦</span>
-          <span>CORE ENGINES & PIPELINES</span>
-        </span>
-        <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight drop-shadow-lg">
-          Production Engines & Workflows
-        </h2>
-        <p class="text-sky-100/90 text-sm sm:text-base mt-2 leading-relaxed drop-shadow">
-          Four specialized procedural tools built to turn raw media into production-ready assets.
-        </p>
-      </div>
-
-      <!-- 4 PAPER-CLIP PINNED 3D CARDS GRID -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- 3D AQUATIC BLUE CONTAINER WITH LIQUID LIGHTING, WAVES & DROPLETS -->
+      <div id="engines-fluid-container" class="relative rounded-[3.5rem] p-8 sm:p-12 lg:p-16 text-white overflow-hidden border-2 border-sky-300/40 shadow-[0_25px_80px_-15px_rgba(2,132,199,0.6)] backdrop-blur-xl" style="background: linear-gradient(140deg, #1e40af 0%, #2563eb 30%, #0284c7 65%, #0369a1 85%, #0f172a 100%);">
         
-        <!-- CARD 1: 24 FPS EXTRACTOR (CINEMA CLAPPERBOARD) -->
-        <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
-          <div class="card-shine"></div>
+        <!-- THREE.JS FLUID SURFACE & DROPLET CANVAS -->
+        <canvas id="fluid-engines-canvas" class="absolute inset-0 w-full h-full pointer-events-none rounded-[3.5rem] z-0"></canvas>
 
-          <!-- COMPACT TOP 3D PAPERCLIP PIN -->
-          <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
-            <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
-          </div>
+        <!-- AQUATIC CAUSTIC REFRACTIONS & DEPTH GLOWS -->
+        <div class="absolute -top-24 -left-24 w-[450px] h-[450px] rounded-full bg-sky-300/30 filter blur-[90px] pointer-events-none"></div>
+        <div class="absolute top-1/4 -right-24 w-[550px] h-[550px] rounded-full bg-cyan-400/25 filter blur-[100px] pointer-events-none"></div>
+        <div class="absolute -bottom-28 left-1/4 w-[450px] h-[450px] rounded-full bg-blue-900/70 filter blur-[90px] pointer-events-none"></div>
 
-          <div>
-            <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">24 FPS Frame Extractor</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">Multi-threaded video parsing for 8-second clips.</p>
-          </div>
+        <!-- TOP GLOSSY WATER SURFACE REFLECTION -->
+        <div class="absolute inset-x-0 top-0 h-44 bg-gradient-to-b from-white/25 via-sky-200/10 to-transparent pointer-events-none"></div>
 
-          <!-- 3D PROCEDURAL CINEMA CLAPPERBOARD (img2threejs) -->
-          <div class="my-2 flex items-center justify-center h-28 relative">
-            <canvas id="canvas-clapperboard" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
-          </div>
-
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">240 frames</span>
-            <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
+        <!-- HEADER -->
+        <div class="relative z-10 max-w-2xl mb-12">
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-sky-200 text-xs font-bold uppercase tracking-wider font-mono mb-3 shadow-inner">
+            <span>✦</span>
+            <span>CORE ENGINES & PIPELINES</span>
+          </span>
+          <h2 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight drop-shadow-md">
+            Production Engines & Workflows
+          </h2>
+          <p class="text-sky-100/90 text-sm sm:text-base mt-2 leading-relaxed">
+            Four specialized procedural tools built to turn raw media into production-ready assets.
+          </p>
         </div>
 
-        <!-- CARD 2: AI BACKGROUND MATTING (PURPLE SCISSORS) -->
-        <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
-          <div class="card-shine"></div>
+        <!-- 4 PAPER-CLIP PINNED 3D CARDS GRID -->
+        <div class="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
+          
+          <!-- CARD 1: 24 FPS EXTRACTOR (CINEMA CLAPPERBOARD) -->
+          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-2xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
 
-          <!-- COMPACT TOP 3D PAPERCLIP PIN -->
-          <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
-            <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">24 FPS Frame Extractor</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Multi-threaded video parsing for 8-second clips.</p>
+            </div>
+
+            <!-- 3D PROCEDURAL CINEMA CLAPPERBOARD (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas id="canvas-clapperboard" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">240 frames</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
           </div>
 
-          <div>
-            <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">4-Stage AI Matting</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">Sub-pixel alpha edge smoothing preserving fine hair.</p>
+          <!-- CARD 2: AI BACKGROUND MATTING (PURPLE SCISSORS) -->
+          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
+
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">4-Stage AI Matting</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Sub-pixel alpha edge smoothing preserving fine hair.</p>
+            </div>
+
+            <!-- 3D PROCEDURAL PURPLE SCISSORS (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas id="canvas-scissors" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Pure Alpha</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
           </div>
 
-          <!-- 3D PROCEDURAL PURPLE SCISSORS (img2threejs) -->
-          <div class="my-2 flex items-center justify-center h-28 relative">
-            <canvas id="canvas-scissors" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
+          <!-- CARD 3: SMART PDF DIGITIZER (CURLED PAPER SHEET) -->
+          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
+
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
+            </div>
+
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Smart PDF Digitizer</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Document contrast filters & drag-and-drop ordering.</p>
+            </div>
+
+            <!-- 3D PROCEDURAL CURLED PAPER SHEET (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas id="canvas-curled-paper" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Multi-Page</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
           </div>
 
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Pure Alpha</span>
-            <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </div>
+          <!-- CARD 4: PROCEDURAL THREE.JS CODE (RED RUBY DICE) -->
+          <div class="card-3d-tilt bg-white/95 backdrop-blur-md text-slate-900 rounded-3xl p-6 shadow-xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+            <div class="card-shine"></div>
 
-        <!-- CARD 3: SMART PDF DIGITIZER (CURLED PAPER SHEET) -->
-        <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
-          <div class="card-shine"></div>
+            <!-- COMPACT TOP 3D PAPERCLIP PIN -->
+            <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
+              <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
+            </div>
 
-          <!-- COMPACT TOP 3D PAPERCLIP PIN -->
-          <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
-            <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
-          </div>
+            <div>
+              <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Procedural 3D Code</h3>
+              <p class="text-xs text-slate-500 leading-relaxed">Three.js models in pure code with zero GLB asset bloat.</p>
+            </div>
 
-          <div>
-            <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Smart PDF Digitizer</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">Document contrast filters & drag-and-drop ordering.</p>
-          </div>
+            <!-- 3D PROCEDURAL RED RUBY DICE (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas id="canvas-red-dice" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
+            </div>
 
-          <!-- 3D PROCEDURAL CURLED PAPER SHEET (img2threejs) -->
-          <div class="my-2 flex items-center justify-center h-28 relative">
-            <canvas id="canvas-curled-paper" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
-          </div>
-
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">Multi-Page</span>
-            <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
-        </div>
-
-        <!-- CARD 4: PROCEDURAL THREE.JS CODE (RED RUBY DICE) -->
-        <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-2xl border border-white relative flex flex-col justify-between min-h-[300px] group cursor-pointer" onclick="window.location.href='/studio.html'">
-          <div class="card-shine"></div>
-
-          <!-- COMPACT TOP 3D PAPERCLIP PIN -->
-          <div class="absolute -top-4 right-6 w-11 h-16 z-30 pointer-events-none filter drop-shadow-md">
-            <canvas class="paperclip-pin-canvas w-full h-full block" width="44" height="64"></canvas>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+              <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">img2threejs</span>
+              <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
+            </div>
           </div>
 
-          <div>
-            <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Procedural 3D Code</h3>
-            <p class="text-xs text-slate-500 leading-relaxed">Three.js models in pure code with zero GLB asset bloat.</p>
-          </div>
-
-          <!-- 3D PROCEDURAL RED RUBY DICE (img2threejs) -->
-          <div class="my-2 flex items-center justify-center h-28 relative">
-            <canvas id="canvas-red-dice" width="120" height="120" class="w-28 h-28 block pointer-events-none"></canvas>
-          </div>
-
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-            <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono font-semibold text-[10px]">img2threejs</span>
-            <span class="font-bold text-blue-600 group-hover:translate-x-1 transition-transform">&rarr;</span>
-          </div>
         </div>
 
       </div>

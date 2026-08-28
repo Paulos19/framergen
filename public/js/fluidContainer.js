@@ -1,412 +1,352 @@
-// FramerTool - Organic Liquid Ink Puddle & Interactive Droplets Engine
-// Ultra-smooth 60fps, zero flicker, global mouse tracking, viscous surface tension, and organic fluid dripping transition.
+// FramerTool - Advanced 3D Aquatic Fluid Surface, Viscous Wake Trail & Droplet Engine (Three.js WebGL)
+// High-performance, zero flicker, cross-section fluid continuity, elastic droplet physics, and scroll overflow.
 
 export class FluidEngineBackground {
   constructor() {
-    this.section = document.getElementById('engines');
+    this.container = document.getElementById('engines-fluid-container') || document.getElementById('engines');
     this.canvas = document.getElementById('fluid-engines-canvas');
-    if (!this.section || !this.canvas) return;
+    if (!this.container || !this.canvas || typeof THREE === 'undefined') return;
 
-    this.ctx = this.canvas.getContext('2d', { alpha: true });
-    if (!this.ctx) return;
-
-    this.width = 0;
-    this.height = 0;
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-    // Mouse tracking (Global na janela para não prender aos limites do card)
     this.mouse = {
-      x: -1000,
-      y: -1000,
-      targetX: -1000,
-      targetY: -1000,
+      x: 0,
+      y: 0,
+      targetX: 0,
+      targetY: 0,
       vx: 0,
       vy: 0,
       prevX: 0,
       prevY: 0,
       speed: 0,
-      isNear: false,
+      isHovering: false,
     };
 
-    // Coleções de física
     this.droplets = [];
-    this.splashes = [];
-    this.waveNodes = [];
-    this.scrollRatio = 0;
+    this.ripples = [];
+    this.trailPoints = [];
+    this.scrollProgress = 0;
 
     this.init();
   }
 
   init() {
-    this.resize();
-    window.addEventListener('resize', () => this.resize());
+    this.scene = new THREE.Scene();
 
-    // 1. Inicializa nós de onda na borda superior e inferior da poça
-    this.initWaveNodes();
+    const rect = this.container.getBoundingClientRect();
+    this.width = rect.width || window.innerWidth;
+    this.height = rect.height || 850;
 
-    // 2. Rastreamento global do mouse (não preso ao card)
-    window.addEventListener('mousemove', (e) => this.onMouseMove(e), { passive: true });
-    window.addEventListener('mouseleave', () => this.onMouseLeave());
+    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 100);
+    this.camera.position.z = 22;
 
-    // 3. Rastreamento de Scroll para escorrimento
-    window.addEventListener('scroll', () => this.onScroll(), { passive: true });
-    this.onScroll();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance',
+    });
+    this.renderer.setSize(this.width, this.height, false);
+    this.renderer.setPixelRatio(dpr);
 
-    // 4. Inicia loop de renderização ultra-fluido
-    this.lastTime = performance.now();
+    // 1. Iluminação Aquática e Cáusticos Realistas
+    const ambientLight = new THREE.AmbientLight(0xdbeafe, 1.4);
+    this.scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xffffff, 2.6);
+    sunLight.position.set(12, 22, 18);
+    this.scene.add(sunLight);
+
+    const deepBlueLight = new THREE.PointLight(0x0284c7, 3.8, 50);
+    deepBlueLight.position.set(-12, -10, 12);
+    this.scene.add(deepBlueLight);
+
+    const cyanRim = new THREE.PointLight(0x38bdf8, 2.2, 35);
+    cyanRim.position.set(0, 15, 10);
+    this.scene.add(cyanRim);
+
+    // 2. Malha de Superfície Líquida 3D
+    this.createWaterSurface();
+
+    // 3. Sistema de Gotas Elásticas com Refração e Tensão Superficial
+    this.createDropletsPool();
+
+    // 4. Listeners Globais e Interações de Mouse / Scroll
+    this.setupInteractions();
+
+    // 5. Loop de Renderização Contínuo
+    this.clock = new THREE.Clock();
     this.animate();
   }
 
-  resize() {
-    if (!this.canvas || !this.section) return;
-    const rect = this.section.getBoundingClientRect();
-    this.width = rect.width || window.innerWidth;
-    this.height = rect.height || 950;
+  createWaterSurface() {
+    const segX = 70;
+    const segY = 45;
+    this.waterGeo = new THREE.PlaneGeometry(42, 28, segX, segY);
+    this.originalPos = this.waterGeo.attributes.position.array.slice();
 
-    this.canvas.width = this.width * this.dpr;
-    this.canvas.height = this.height * this.dpr;
-    this.canvas.style.width = `${this.width}px`;
-    this.canvas.style.height = `${this.height}px`;
+    // Material Físico Aquático Profundo (Com Brilho Especular e Refração)
+    this.waterMat = new THREE.MeshPhysicalMaterial({
+      color: 0x1e40af,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.35,
+      roughness: 0.1,
+      metalness: 0.12,
+      transmission: 0.4,
+      ior: 1.333,
+      thickness: 2.2,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.06,
+      reflectivity: 0.95,
+      sheen: 0.6,
+      sheenColor: new THREE.Color(0x38bdf8),
+    });
 
-    this.ctx.scale(this.dpr, this.dpr);
-    this.initWaveNodes();
+    this.waterMesh = new THREE.Mesh(this.waterGeo, this.waterMat);
+    this.waterMesh.position.z = -1.5;
+    this.scene.add(this.waterMesh);
   }
 
-  initWaveNodes() {
-    this.waveNodes = [];
-    const nodeCount = 36;
-    for (let i = 0; i <= nodeCount; i++) {
-      this.waveNodes.push({
-        x: (i / nodeCount) * this.width,
-        y: 0,
-        vy: 0,
-        targetY: 0,
+  createDropletsPool() {
+    this.dropletsGroup = new THREE.Group();
+    const dropletGeo = new THREE.SphereGeometry(0.24, 16, 16);
+    const dropletMat = new THREE.MeshPhysicalMaterial({
+      color: 0x38bdf8,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.4,
+      roughness: 0.05,
+      transmission: 0.85,
+      ior: 1.333,
+      clearcoat: 1.0,
+      thickness: 0.9,
+      sheen: 0.9,
+      sheenColor: new THREE.Color(0xffffff),
+    });
+
+    for (let i = 0; i < 18; i++) {
+      const mesh = new THREE.Mesh(dropletGeo, dropletMat);
+      mesh.visible = false;
+      this.dropletsGroup.add(mesh);
+      this.droplets.push({
+        mesh,
+        x: 0, y: 0, z: 0,
+        vx: 0, vy: 0, vz: 0,
+        active: false,
+        detached: false,
+        size: Math.random() * 0.4 + 0.6,
       });
     }
+
+    this.scene.add(this.dropletsGroup);
   }
 
-  onMouseMove(e) {
-    const rect = this.section.getBoundingClientRect();
-    const curX = e.clientX - rect.left;
-    const curY = e.clientY - rect.top;
+  setupInteractions() {
+    window.addEventListener('resize', () => this.onResize());
 
-    this.mouse.vx = curX - this.mouse.prevX;
-    this.mouse.vy = curY - this.mouse.prevY;
-    this.mouse.speed = Math.hypot(this.mouse.vx, this.mouse.vy);
+    // Rastreamento de Mouse Global na Página
+    window.addEventListener('mousemove', (e) => {
+      if (!this.container) return;
+      const rect = this.container.getBoundingClientRect();
+      const rawX = (e.clientX - rect.left) / rect.width;
+      const rawY = (e.clientY - rect.top) / rect.height;
 
-    this.mouse.prevX = curX;
-    this.mouse.prevY = curY;
-    this.mouse.x = curX;
-    this.mouse.y = curY;
+      const vx = (rawX - this.mouse.prevX) * 35;
+      const vy = (rawY - this.mouse.prevY) * 35;
+      this.mouse.speed = Math.hypot(vx, vy);
 
-    // Verifica se está na região da seção ou arredores próximos
-    this.mouse.isNear = (curY >= -150 && curY <= this.height + 250 && curX >= -100 && curX <= this.width + 100);
+      this.mouse.vx = vx;
+      this.mouse.vy = vy;
+      this.mouse.prevX = rawX;
+      this.mouse.prevY = rawY;
 
-    if (this.mouse.isNear) {
-      // Perturbação de ondas ao mover o mouse
-      this.disturbWaves(curX, this.mouse.speed);
+      // Coordenadas 3D do mundo
+      this.mouse.targetX = (rawX - 0.5) * 38;
+      this.mouse.targetY = -(rawY - 0.5) * 25;
 
-      // Solta gotas se houver movimento
-      if (this.mouse.speed > 8 && Math.random() < 0.65) {
-        this.spawnDroplet(curX, curY, this.mouse.vx, this.mouse.vy);
+      this.mouse.isHovering = (rawX >= -0.15 && rawX <= 1.15 && rawY >= -0.15 && rawY <= 1.15);
+
+      if (this.mouse.isHovering) {
+        // Adiciona ponto ao rastro fluido (wake trail)
+        this.addTrailPoint(this.mouse.targetX, this.mouse.targetY, Math.min(2.5, this.mouse.speed));
+
+        // Solta gotas elásticas com velocidade
+        if (this.mouse.speed > 0.75) {
+          this.spawnDroplet(this.mouse.targetX, this.mouse.targetY, vx, vy);
+        }
       }
-    }
+    }, { passive: true });
+
+    // Scroll Progress para Interação Entre Sessões
+    window.addEventListener('scroll', () => {
+      if (!this.container) return;
+      const rect = this.container.getBoundingClientRect();
+      const winH = window.innerHeight;
+      const totalDist = rect.height + winH;
+      const current = winH - rect.top;
+      this.scrollProgress = Math.max(0, Math.min(1, current / totalDist));
+      this.updateCrossSectionOverflow();
+    }, { passive: true });
+    this.updateCrossSectionOverflow();
   }
 
-  onMouseLeave() {
-    this.mouse.isNear = false;
-    // Retorna todas as gotas soltas com impacto de splash
-    this.droplets.forEach(d => {
-      if (d.active) {
-        this.triggerSplash(d.x, Math.min(this.height - 20, Math.max(20, d.y)), d.size * 1.5);
-        d.active = false;
-      }
+  addTrailPoint(x, y, strength = 1.0) {
+    this.ripples.push({
+      x, y,
+      radius: 0.1,
+      maxRadius: 9.0,
+      strength: strength * 0.65,
+      age: 0,
     });
+    if (this.ripples.length > 24) this.ripples.shift();
   }
 
-  onScroll() {
-    if (!this.section) return;
-    const rect = this.section.getBoundingClientRect();
-    const winH = window.innerHeight;
-    const totalDist = rect.height + winH;
-    const current = winH - rect.top;
-    this.scrollRatio = Math.max(0, Math.min(1, current / totalDist));
-  }
-
-  disturbWaves(x, force) {
-    const clampedForce = Math.min(force * 0.4, 25);
-    this.waveNodes.forEach(node => {
-      const dist = Math.abs(node.x - x);
-      if (dist < 180) {
-        const factor = Math.cos((dist / 180) * Math.PI * 0.5);
-        node.vy += clampedForce * factor * (Math.random() > 0.5 ? 1 : -1);
-      }
-    });
+  triggerSplash(x, y, force = 1.0) {
+    this.addTrailPoint(x, y, force * 2.2);
   }
 
   spawnDroplet(x, y, vx, vy) {
-    const angle = Math.atan2(vy, vx) + (Math.random() - 0.5) * 0.6;
-    const speed = Math.min(Math.hypot(vx, vy) * 0.55, 18);
+    const droplet = this.droplets.find(d => !d.active);
+    if (!droplet) return;
 
-    this.droplets.push({
-      x: x + (Math.random() - 0.5) * 12,
-      y: y + (Math.random() - 0.5) * 12,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      size: Math.random() * 7 + 5,
-      alpha: 1.0,
-      active: true,
-      tether: { x, y }, // Ponto de ancoragem elástica
-      life: 0,
-      maxLife: Math.random() * 60 + 50,
-    });
+    droplet.active = true;
+    droplet.mesh.visible = true;
+    droplet.x = x + (Math.random() - 0.5) * 0.6;
+    droplet.y = y + (Math.random() - 0.5) * 0.6;
+    droplet.z = 0.6;
 
-    if (this.droplets.length > 35) this.droplets.shift();
+    droplet.vx = vx * 0.22 + (Math.random() - 0.5) * 0.3;
+    droplet.vy = -vy * 0.22 + (Math.random() - 0.5) * 0.3;
+    droplet.vz = 0.9 + Math.random() * 0.5;
+    droplet.detached = false;
   }
 
-  triggerSplash(x, y, radius = 20) {
-    this.splashes.push({
-      x, y,
-      radius: 4,
-      maxRadius: radius * 3.5,
-      alpha: 0.8,
-      speed: 2.2,
-    });
-    if (this.splashes.length > 25) this.splashes.shift();
+  updateCrossSectionOverflow() {
+    const overflowOverlay = document.getElementById('fluid-overflow-overlay');
+    if (overflowOverlay) {
+      if (this.scrollProgress > 0.4) {
+        const factor = Math.min(1, (this.scrollProgress - 0.4) / 0.45);
+        overflowOverlay.style.opacity = factor;
+        overflowOverlay.style.transform = `translateY(${factor * 25}px)`;
+      } else {
+        overflowOverlay.style.opacity = 0;
+      }
+    }
+  }
+
+  onResize() {
+    if (!this.container || !this.renderer || !this.camera) return;
+    const rect = this.container.getBoundingClientRect();
+    this.width = rect.width || window.innerWidth;
+    this.height = rect.height || 850;
+
+    this.camera.aspect = this.width / this.height;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(this.width, this.height, false);
   }
 
   animate() {
     requestAnimationFrame(() => this.animate());
 
-    const now = performance.now();
-    const dt = Math.min((now - this.lastTime) / 1000, 0.1);
-    this.lastTime = now;
+    const delta = this.clock.getDelta();
+    const time = this.clock.getElapsedTime();
 
-    this.updatePhysics(dt, now * 0.001);
-    this.draw(now * 0.001);
-  }
+    // Suavização da Posição do Mouse (Wake Smoothing)
+    this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.18;
+    this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.18;
 
-  updatePhysics(dt, time) {
-    // 1. Atualização das Ondas (Spring Oscillation)
-    const tension = 0.045;
-    const dampening = 0.94;
-    const spread = 0.25;
-
-    for (let i = 0; i < this.waveNodes.length; i++) {
-      const node = this.waveNodes[i];
-      const force = -tension * node.y;
-      node.vy += force;
-      node.vy *= dampening;
-      node.y += node.vy;
-    }
-
-    // Propagação lateral das ondas
-    for (let j = 0; j < 4; j++) {
-      for (let i = 0; i < this.waveNodes.length; i++) {
-        if (i > 0) {
-          const leftDiff = spread * (this.waveNodes[i - 1].y - this.waveNodes[i].y);
-          this.waveNodes[i - 1].vy += leftDiff;
-        }
-        if (i < this.waveNodes.length - 1) {
-          const rightDiff = spread * (this.waveNodes[i + 1].y - this.waveNodes[i].y);
-          this.waveNodes[i + 1].vy += rightDiff;
-        }
+    // 1. Atualização dos Ripples do Rastro
+    for (let i = this.ripples.length - 1; i >= 0; i--) {
+      const r = this.ripples[i];
+      r.radius += delta * 7.0;
+      r.age += delta;
+      r.strength *= 0.94;
+      if (r.age > 2.2 || r.strength < 0.01) {
+        this.ripples.splice(i, 1);
       }
     }
 
-    // 2. Atualização das Gotas com Tensão Superficial e Retorno Elástico
-    for (let i = this.droplets.length - 1; i >= 0; i--) {
-      const d = this.droplets[i];
-      if (!d.active) continue;
+    // 2. Deformação Geométrica da Água (Ondas Contínuas e Rastro do Mouse)
+    const pos = this.waterGeo.attributes.position.array;
+    const orig = this.originalPos;
+    const count = pos.length / 3;
+    const overflowWave = Math.sin(this.scrollProgress * Math.PI) * 2.0;
 
-      d.life++;
+    for (let i = 0; i < count; i++) {
+      const i3 = i * 3;
+      const vx = orig[i3];
+      const vy = orig[i3 + 1];
 
-      // Atração de retorno elástico em direção ao mouse ou ao corpo da poça
-      if (this.mouse.isNear) {
-        const dx = this.mouse.x - d.x;
-        const dy = this.mouse.y - d.y;
-        d.vx += dx * 0.035;
-        d.vy += dy * 0.035;
-      } else {
-        // Gravidade e atração para o centro da poça
-        d.vy += 0.45;
+      // Ondulação Orgânica Base
+      let z = Math.sin(vx * 0.28 + time * 1.7) * Math.cos(vy * 0.28 + time * 1.5) * 0.3;
+      z += Math.sin(vx * 0.55 - time * 2.1) * 0.14;
+
+      // Rastro Viscoso Sob o Mouse
+      if (this.mouse.isHovering) {
+        const dx = vx - this.mouse.x;
+        const dy = vy - this.mouse.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 7.5) {
+          const falloff = Math.cos((dist / 7.5) * Math.PI * 0.5);
+          z += Math.sin(dist * 1.8 - time * 7.5) * falloff * 0.75;
+        }
       }
 
-      d.vx *= 0.93;
-      d.vy *= 0.93;
+      // Propagação dos Ripples
+      for (let j = 0; j < this.ripples.length; j++) {
+        const rip = this.ripples[j];
+        const dist = Math.hypot(vx - rip.x, vy - rip.y);
+        const diff = dist - rip.radius;
+        if (Math.abs(diff) < 1.8) {
+          z += Math.cos(diff * 2.2) * rip.strength * (1.0 - rip.radius / rip.maxRadius);
+        }
+      }
+
+      // Transbordo na Base (Interação com a Próxima Seção)
+      if (vy < -5.0) {
+        const bottomFactor = (-vy - 5.0) / 7.0;
+        z -= overflowWave * bottomFactor * 1.1;
+      }
+
+      pos[i3 + 2] = z;
+    }
+
+    this.waterGeo.attributes.position.needsUpdate = true;
+
+    // 3. Atualização das Gotas Elásticas Flutuantes
+    this.droplets.forEach(d => {
+      if (!d.active) return;
+
       d.x += d.vx;
       d.y += d.vy;
+      d.z += d.vz;
+      d.vz -= delta * 3.6;
 
-      // Colisão / Retorno à poça com splash
-      if (d.life > d.maxLife || d.y < 0 || d.y > this.height || d.x < 0 || d.x > this.width) {
-        this.triggerSplash(Math.max(10, Math.min(this.width - 10, d.x)), Math.max(10, Math.min(this.height - 10, d.y)), d.size);
-        this.droplets.splice(i, 1);
-      }
-    }
+      // Atração Elástica em Direção ao Cursor
+      if (this.mouse.isHovering && !d.detached) {
+        const targetDX = this.mouse.x - d.x;
+        const targetDY = this.mouse.y - d.y;
+        d.vx += targetDX * delta * 2.6;
+        d.vy += targetDY * delta * 2.6;
 
-    // 3. Atualização dos Splashes
-    for (let i = this.splashes.length - 1; i >= 0; i--) {
-      const s = this.splashes[i];
-      s.radius += s.speed;
-      s.alpha -= 0.022;
-      if (s.alpha <= 0 || s.radius >= s.maxRadius) {
-        this.splashes.splice(i, 1);
-      }
-    }
-  }
-
-  draw(time) {
-    if (!this.ctx) return;
-    this.ctx.clearRect(0, 0, this.width, this.height);
-
-    const w = this.width;
-    const h = this.height;
-
-    // 1. FORMA ORGÂNICA UNIFORME DA POÇA DE TINTA / ÁGUA (SEM LIMITES RETANGULARES)
-    // Curva superior orgânica e curva inferior de escorrimento dinâmico
-    this.ctx.save();
-
-    this.ctx.beginPath();
-    // Início no topo esquerdo com curvatura suave
-    this.ctx.moveTo(0, 70);
-
-    // Curva do Topo (Menisco Superior Fluido com Ondas)
-    const topWaveAmp = 28;
-    for (let i = 0; i < this.waveNodes.length; i++) {
-      const node = this.waveNodes[i];
-      const naturalWave = Math.sin((node.x / w) * Math.PI * 4 + time * 2) * 12;
-      const waveY = 60 + node.y + naturalWave;
-      this.ctx.lineTo(node.x, waveY);
-    }
-
-    // Lateral Direita
-    this.ctx.lineTo(w, h - 80);
-
-    // Curva Inferior com Efeito de Escorrimento / Transbordo (Drips & Viscous Curves)
-    const overflowFactor = Math.sin(this.scrollRatio * Math.PI) * 60;
-    
-    // Goteiras e estalactites fluidas orgânicas na base
-    const dripCount = 5;
-    for (let i = dripCount; i >= 0; i--) {
-      const nx = (i / dripCount) * w;
-      const dripWave = Math.sin(i * 1.8 + time * 2.5) * (20 + overflowFactor);
-      const bottomY = h - 40 + dripWave + overflowFactor;
-      const ctrlX = nx - w / (dripCount * 2);
-      const ctrlY = bottomY + 25 + overflowFactor * 0.5;
-      this.ctx.quadraticCurveTo(ctrlX, ctrlY, nx - w / dripCount, bottomY);
-    }
-
-    // Lateral Esquerda de volta ao início
-    this.ctx.lineTo(0, 70);
-    this.ctx.closePath();
-
-    // 2. GRADIENTE DE PROFUNDIDADE AQUÁTICA PROFUNDA & ILUMINAÇÃO
-    const grad = this.ctx.createLinearGradient(0, 0, w * 0.6, h);
-    grad.addColorStop(0, '#1d4ed8');   // Royal Blue
-    grad.addColorStop(0.35, '#2563eb'); // Electric Blue
-    grad.addColorStop(0.7, '#0284c7');  // Deep Sky Blue
-    grad.addColorStop(1, '#0f172a');    // Deep Ocean Slate
-
-    this.ctx.fillStyle = grad;
-    this.ctx.shadowColor = 'rgba(2, 132, 199, 0.45)';
-    this.ctx.shadowBlur = 40;
-    this.ctx.fill();
-    this.ctx.restore();
-
-    // 3. CÁUSTICOS E BRILHO DE SUPERFÍCIE LÍQUIDA
-    this.ctx.save();
-    // Brilho no topo do menisco
-    const topGlow = this.ctx.createLinearGradient(0, 40, 0, 180);
-    topGlow.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
-    topGlow.addColorStop(0.5, 'rgba(56, 189, 248, 0.15)');
-    topGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    this.ctx.fillStyle = topGlow;
-    this.ctx.fillRect(0, 30, w, 150);
-
-    // Reflexo de Luz Cáustica Dinâmica próxima ao Mouse
-    if (this.mouse.isNear) {
-      const mouseGlow = this.ctx.createRadialGradient(
-        this.mouse.x, this.mouse.y, 0,
-        this.mouse.x, this.mouse.y, 220
-      );
-      mouseGlow.addColorStop(0, 'rgba(186, 230, 254, 0.35)');
-      mouseGlow.addColorStop(0.5, 'rgba(56, 189, 248, 0.12)');
-      mouseGlow.addColorStop(1, 'rgba(56, 189, 248, 0)');
-      this.ctx.fillStyle = mouseGlow;
-      this.ctx.beginPath();
-      this.ctx.arc(this.mouse.x, this.mouse.y, 220, 0, Math.PI * 2);
-      this.ctx.fill();
-    }
-    this.ctx.restore();
-
-    // 4. DESENHO DOS IMPACTOS DE SPLASH (ONDULAÇÕES CONCÊNTRICAS)
-    this.splashes.forEach(s => {
-      this.ctx.save();
-      this.ctx.beginPath();
-      this.ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-      this.ctx.strokeStyle = `rgba(186, 230, 254, ${s.alpha})`;
-      this.ctx.lineWidth = 2.5;
-      this.ctx.stroke();
-
-      this.ctx.beginPath();
-      this.ctx.arc(s.x, s.y, s.radius * 0.65, 0, Math.PI * 2);
-      this.ctx.strokeStyle = `rgba(56, 189, 248, ${s.alpha * 0.6})`;
-      this.ctx.lineWidth = 1.5;
-      this.ctx.stroke();
-      this.ctx.restore();
-    });
-
-    // 5. DESENHO DAS GOTAS ELÁSTICAS FLUTUANTES (3D WATER DROPLETS)
-    this.droplets.forEach(d => {
-      this.ctx.save();
-      
-      // Conexão de tensão superficial se estiver perto do mouse (tendão elástico)
-      if (this.mouse.isNear) {
-        const dist = Math.hypot(this.mouse.x - d.x, this.mouse.y - d.y);
-        if (dist < 120) {
-          const tetherAlpha = (1 - dist / 120) * 0.45;
-          this.ctx.beginPath();
-          this.ctx.moveTo(d.x, d.y);
-          this.ctx.quadraticCurveTo(
-            (d.x + this.mouse.x) / 2 + d.vx * 2,
-            (d.y + this.mouse.y) / 2 + d.vy * 2,
-            this.mouse.x, this.mouse.y
-          );
-          this.ctx.strokeStyle = `rgba(56, 189, 248, ${tetherAlpha})`;
-          this.ctx.lineWidth = Math.max(1, (1 - dist / 120) * (d.size * 0.6));
-          this.ctx.stroke();
+        if (Math.hypot(targetDX, targetDY) > 9.5) {
+          d.detached = true;
         }
       }
 
-      // Corpo da Gota com Sombra e Brilho Esférico
-      this.ctx.beginPath();
-      const speed = Math.hypot(d.vx, d.vy);
-      const stretch = Math.min(speed * 0.25, 2.0);
-      const angle = Math.atan2(d.vy, d.vx);
-
-      this.ctx.translate(d.x, d.y);
-      this.ctx.rotate(angle);
-      this.ctx.ellipse(0, 0, d.size * (1 + stretch), d.size, 0, 0, Math.PI * 2);
-
-      const dropGrad = this.ctx.createRadialGradient(-d.size * 0.3, -d.size * 0.3, 0, 0, 0, d.size);
-      dropGrad.addColorStop(0, '#ffffff');
-      dropGrad.addColorStop(0.3, '#38bdf8');
-      dropGrad.addColorStop(0.8, '#0284c7');
-      dropGrad.addColorStop(1, '#1e40af');
-
-      this.ctx.fillStyle = dropGrad;
-      this.ctx.shadowColor = 'rgba(56, 189, 248, 0.6)';
-      this.ctx.shadowBlur = 12;
-      this.ctx.fill();
-
-      // Ponto de brilho especular branco no topo da gota
-      this.ctx.beginPath();
-      this.ctx.arc(-d.size * 0.35, -d.size * 0.35, d.size * 0.28, 0, Math.PI * 2);
-      this.ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      this.ctx.fill();
-
-      this.ctx.restore();
+      // Retorno e Splash na Água
+      if (d.z <= 0.1 && d.vz < 0) {
+        this.triggerSplash(d.x, d.y, Math.abs(d.vz) * 0.85);
+        d.active = false;
+        d.mesh.visible = false;
+      } else {
+        d.mesh.position.set(d.x, d.y, d.z);
+        const speed = Math.hypot(d.vx, d.vy, d.vz);
+        d.mesh.scale.set(d.size, d.size * (1.0 + speed * 0.8), d.size);
+        d.mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(d.vx, d.vy, d.vz).normalize());
+      }
     });
+
+    this.renderer.render(this.scene, this.camera);
   }
 }
 
