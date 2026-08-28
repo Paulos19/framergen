@@ -4,9 +4,10 @@ import { initTabs, initModal, showToast } from './ui.js';
 import { initExtractor } from './extractor.js';
 import { initBgRemover } from './bgRemover.js';
 import { initScanner } from './scanner.js';
+import { initStudioThree } from './studioThree.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('✨ [Media Studio Suite] Inicializando módulos...');
+  console.log('🌱 [Media Studio Suite] Inicializando módulos com 3D Nature Ambient & Procedural Icons...');
 
   try {
     initTabs();
@@ -14,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initExtractor();
     initBgRemover();
     initScanner();
+    
+    // Inicializa motor 3D procedural (Three.js img2threejs)
+    initStudioThree();
     
     if (window.lucide) {
       window.lucide.createIcons();
