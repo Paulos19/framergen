@@ -340,24 +340,17 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-4">
           
           <!-- CARD 1: 24 FPS EXTRACTOR -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
-            
-            <!-- REALISTIC PAPERCLIP PIN SVG -->
-            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">24 FPS Frame Extractor</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Multi-threaded video parsing for 8-second clips.</p>
             </div>
 
-            <!-- 3D GRAPHIC ICON & PILL BADGE -->
-            <div class="my-4 flex items-center justify-center">
-              <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                🎬
-              </div>
+            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
@@ -367,22 +360,17 @@
           </div>
 
           <!-- CARD 2: AI BACKGROUND MATTING -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
-            
-            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">4-Stage AI Matting</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Sub-pixel alpha edge smoothing preserving fine hair.</p>
             </div>
 
-            <div class="my-4 flex items-center justify-center">
-              <div class="w-16 h-16 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                ✂️
-              </div>
+            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
@@ -392,22 +380,17 @@
           </div>
 
           <!-- CARD 3: SMART PDF DIGITIZER -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
-            
-            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Smart PDF Digitizer</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Document contrast filters & drag-and-drop ordering.</p>
             </div>
 
-            <div class="my-4 flex items-center justify-center">
-              <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                📄
-              </div>
+            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
@@ -417,22 +400,17 @@
           </div>
 
           <!-- CARD 4: PROCEDURAL THREE.JS CODE (img2threejs) -->
-          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[260px] group cursor-pointer" onclick="window.location.href='/studio.html'">
+          <div class="card-3d-tilt bg-white text-slate-900 rounded-3xl p-6 shadow-xl border border-white/80 relative flex flex-col justify-between min-h-[280px] group cursor-pointer" onclick="window.location.href='/studio.html'">
             <div class="card-shine"></div>
-            
-            <svg class="paperclip-pin" viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C7.58 2 4 5.58 4 10V28C4 32.42 7.58 36 12 36C16.42 36 20 32.42 20 28V8C20 4.69 17.31 2 14 2C10.69 2 8 4.69 8 8V27C8 29.21 9.79 31 12 31C14.21 31 16 29.21 16 27V10" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
 
             <div>
               <h3 class="font-bold text-lg text-slate-950 mb-1 leading-snug">Procedural 3D Code</h3>
               <p class="text-xs text-slate-500 leading-relaxed">Three.js models in pure code with zero GLB asset bloat.</p>
             </div>
 
-            <div class="my-4 flex items-center justify-center">
-              <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
-                🧊
-              </div>
+            <!-- INTERACTIVE 3D THREE.JS PAPERCLIP (img2threejs) -->
+            <div class="my-2 flex items-center justify-center h-28 relative">
+              <canvas class="paperclip-canvas-3d w-28 h-28 block pointer-events-none"></canvas>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">

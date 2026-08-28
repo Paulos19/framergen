@@ -3,9 +3,10 @@
 import { HeroScrollTelling } from './heroScroll.js';
 import { LogoThreeScene } from './logoThree.js';
 import { init3DTiltCards } from './card3d.js';
+import { initAllPaperclips } from './paperclipThree.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('⚡ [FramerTool Landing Page] Initializing Scrolltelling, 3D Logo & 3D Tilt Cards...');
+  console.log('⚡ [FramerTool Landing Page] Initializing 3D Clips, Logo & Scrolltelling...');
 
   // 1. Initialize 240-frame scroll engine
   const scrollEngine = new HeroScrollTelling();
@@ -13,10 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // 2. Initialize 3D Three.js Logo in the floating navbar
   const logo3D = new LogoThreeScene();
 
-  // 3. Initialize Interactive 3D Tilt Cards
+  // 3. Initialize Interactive 3D Paperclips (img2threejs)
+  const paperclips = initAllPaperclips();
+
+  // 4. Initialize Interactive 3D Tilt Cards
   init3DTiltCards();
 
-  // 4. Navbar scroll effect
+  // 5. Navbar scroll effect
   const navbar = document.getElementById('floating-navbar');
   window.addEventListener('scroll', () => {
     if (!navbar) return;
@@ -29,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
-  // 5. Smooth scroll on SCROLL indicator click
+  // 6. Smooth scroll on SCROLL indicator click
   document.getElementById('hero-scroll-indicator')?.addEventListener('click', () => {
     window.scrollTo({
       top: window.innerHeight * 1.2,
