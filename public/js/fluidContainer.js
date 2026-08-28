@@ -1,13 +1,13 @@
-// FramerTool - Interactive 3D Aquatic Fluid Surface & Droplet Engine (Three.js / WebGL)
-// Features: Mouse wave ripples, spring-elastic droplets, splash return impact, and scroll overflow transition.
+// FramerTool - Full Section 3D Aquatic Fluid Mesh & Droplet Engine (Three.js / WebGL)
+// The fluid puddle covers the entire section background, deforms under mouse hover, throws spring droplets, and overflows into the next section on scroll.
 
 export class FluidEngineBackground {
   constructor() {
-    this.container = document.getElementById('engines-fluid-container');
+    this.section = document.getElementById('engines');
     this.canvas = document.getElementById('fluid-engines-canvas');
-    if (!this.container || !this.canvas || typeof THREE === 'undefined') return;
+    if (!this.section || !this.canvas || typeof THREE === 'undefined') return;
 
-    this.mouse = { x: 0.5, y: 0.5, vx: 0, vy: 0, prevX: 0.5, prevY: 0.5, isHovering: false };
+    this.mouse = { x: 0, y: 0, vx: 0, vy: 0, prevX: 0, prevY: 0, isHovering: false };
     this.droplets = [];
     this.ripples = [];
     this.scrollProgress = 0;
@@ -16,15 +16,14 @@ export class FluidEngineBackground {
   }
 
   init() {
-    // 1. Three.js Scene, Camera & Renderer
     this.scene = new THREE.Scene();
 
-    const rect = this.container.getBoundingClientRect();
-    this.width = rect.width;
-    this.height = rect.height;
+    const rect = this.section.getBoundingClientRect();
+    this.width = rect.width || window.innerWidth;
+    this.height = rect.height || 900;
 
     this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 0.1, 100);
-    this.camera.position.z = 20;
+    this.camera.position.z = 24;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.renderer = new THREE.WebGLRenderer({
@@ -33,73 +32,70 @@ export class FluidEngineBackground {
       antialias: true,
       powerPreference: 'high-performance',
     });
-    this.renderer.setSize(this.width, this.height);
+    this.renderer.setSize(this.width, this.height, false);
     this.renderer.setPixelRatio(dpr);
 
-    // 2. Iluminação Aquática & Cáusticos
-    const ambientLight = new THREE.AmbientLight(0xdbeafe, 1.2);
+    // Aquatic Lighting & Deep Caustics
+    const ambientLight = new THREE.AmbientLight(0xdbeafe, 1.4);
     this.scene.add(ambientLight);
 
     const sunLight = new THREE.DirectionalLight(0xffffff, 2.5);
-    sunLight.position.set(10, 20, 15);
+    sunLight.position.set(15, 25, 20);
     this.scene.add(sunLight);
 
-    const deepBlueLight = new THREE.PointLight(0x0284c7, 3.0, 40);
-    deepBlueLight.position.set(-10, -10, 10);
-    this.scene.add(deepBlueLight);
+    const blueGlow = new THREE.PointLight(0x0284c7, 3.5, 50);
+    blueGlow.position.set(-15, -10, 12);
+    this.scene.add(blueGlow);
 
-    // 3. Malha Deformável da Superfície da Água (Plane with High Subdivision)
+    // 1. Malha Tridimensional Deformável de Fluido (Full Background)
     this.createWaterSurface();
 
-    // 4. Sistema de Gotas Elásticas Interativas
+    // 2. Sistema de Gotas Elásticas
     this.createDropletsPool();
 
-    // 5. Event Listeners (Mouse & Scroll)
+    // 3. Interações de Mouse e Scroll
     this.setupInteractions();
 
-    // 6. Loop de Renderização
+    // 4. Render Loop
     this.clock = new THREE.Clock();
     this.animate();
   }
 
   createWaterSurface() {
-    // Malha 3D de alta densidade para simular ondas e deformação
-    const segX = 80;
-    const segY = 50;
-    this.waterGeo = new THREE.PlaneGeometry(36, 24, segX, segY);
-
-    // Salva posições originais para deformação elástica
+    const segX = 90;
+    const segY = 60;
+    this.waterGeo = new THREE.PlaneGeometry(50, 32, segX, segY);
     this.originalPos = this.waterGeo.attributes.position.array.slice();
 
-    // Material Aquático Físico Profundo
+    // Material de Tinta / Água Profunda Azul
     this.waterMat = new THREE.MeshPhysicalMaterial({
       color: 0x1d4ed8,
-      emissive: 0x0369a1,
-      emissiveIntensity: 0.35,
-      roughness: 0.1,
-      metalness: 0.15,
-      transmission: 0.45,
-      ior: 1.333, // Índice de refração da água
-      thickness: 2.5,
+      emissive: 0x0284c7,
+      emissiveIntensity: 0.3,
+      roughness: 0.12,
+      metalness: 0.1,
+      transmission: 0.35,
+      ior: 1.333,
+      thickness: 2.0,
       clearcoat: 1.0,
       clearcoatRoughness: 0.08,
       reflectivity: 0.9,
-      sheen: 0.5,
+      sheen: 0.6,
       sheenColor: new THREE.Color(0x38bdf8),
     });
 
     this.waterMesh = new THREE.Mesh(this.waterGeo, this.waterMat);
-    this.waterMesh.position.z = -1;
+    this.waterMesh.position.z = -2;
     this.scene.add(this.waterMesh);
   }
 
   createDropletsPool() {
     this.dropletsGroup = new THREE.Group();
-    const dropletGeo = new THREE.SphereGeometry(0.24, 16, 16);
+    const dropletGeo = new THREE.SphereGeometry(0.25, 16, 16);
     const dropletMat = new THREE.MeshPhysicalMaterial({
       color: 0x38bdf8,
       roughness: 0.05,
-      transmission: 0.8,
+      transmission: 0.85,
       ior: 1.333,
       clearcoat: 1.0,
       thickness: 0.8,
@@ -107,22 +103,17 @@ export class FluidEngineBackground {
       sheenColor: new THREE.Color(0xffffff),
     });
 
-    // Pool de 14 gotas dinâmicas
-    for (let i = 0; i < 14; i++) {
+    for (let i = 0; i < 16; i++) {
       const mesh = new THREE.Mesh(dropletGeo, dropletMat);
       mesh.visible = false;
-      mesh.scale.setScalar(Math.random() * 0.5 + 0.7);
       this.dropletsGroup.add(mesh);
       this.droplets.push({
         mesh,
         x: 0, y: 0, z: 0,
-        targetX: 0, targetY: 0,
         vx: 0, vy: 0, vz: 0,
         active: false,
-        life: 0,
-        maxLife: 1.0,
         detached: false,
-        size: Math.random() * 0.4 + 0.6,
+        size: Math.random() * 0.4 + 0.7,
       });
     }
 
@@ -130,17 +121,14 @@ export class FluidEngineBackground {
   }
 
   setupInteractions() {
-    // Resize Listener
     window.addEventListener('resize', () => this.onResize());
 
-    // Mouse Move & Hover no Container Azul
-    this.container.addEventListener('mouseenter', () => {
+    this.section.addEventListener('mouseenter', () => {
       this.mouse.isHovering = true;
     });
 
-    this.container.addEventListener('mouseleave', () => {
+    this.section.addEventListener('mouseleave', () => {
       this.mouse.isHovering = false;
-      // Retorna todas as gotas soltas com impacto na água
       this.droplets.forEach(d => {
         if (d.active) {
           this.triggerSplash(d.x, d.y, 1.2);
@@ -150,42 +138,37 @@ export class FluidEngineBackground {
       });
     });
 
-    this.container.addEventListener('mousemove', (e) => {
-      const rect = this.container.getBoundingClientRect();
+    this.section.addEventListener('mousemove', (e) => {
+      const rect = this.section.getBoundingClientRect();
       const rawX = (e.clientX - rect.left) / rect.width;
       const rawY = (e.clientY - rect.top) / rect.height;
 
-      this.mouse.vx = (rawX - this.mouse.prevX) * 25;
-      this.mouse.vy = (rawY - this.mouse.prevY) * 25;
+      this.mouse.vx = (rawX - this.mouse.prevX) * 35;
+      this.mouse.vy = (rawY - this.mouse.prevY) * 35;
 
       this.mouse.prevX = rawX;
       this.mouse.prevY = rawY;
 
-      // Coordenadas 3D do mundo (-16 a 16 em X, -10 a 10 em Y)
-      this.mouse.x = (rawX - 0.5) * 32;
-      this.mouse.y = -(rawY - 0.5) * 20;
+      // Coordenadas 3D relativas
+      this.mouse.x = (rawX - 0.5) * 44;
+      this.mouse.y = -(rawY - 0.5) * 28;
 
-      // Cria ondulação na superfície
-      this.addRipple(this.mouse.x, this.mouse.y, Math.min(2.5, Math.hypot(this.mouse.vx, this.mouse.vy)));
+      // Ondulação
+      this.addRipple(this.mouse.x, this.mouse.y, Math.min(3.0, Math.hypot(this.mouse.vx, this.mouse.vy)));
 
-      // Desprende gotas se houver movimento rápido
-      if (Math.hypot(this.mouse.vx, this.mouse.vy) > 0.8) {
+      // Solta gotas se houver aceleração
+      if (Math.hypot(this.mouse.vx, this.mouse.vy) > 0.65) {
         this.spawnDroplet(this.mouse.x, this.mouse.y, this.mouse.vx, this.mouse.vy);
       }
     });
 
-    // Scroll Listener para o Efeito de Transbordo
     window.addEventListener('scroll', () => {
-      if (!this.container) return;
-      const rect = this.container.getBoundingClientRect();
+      if (!this.section) return;
+      const rect = this.section.getBoundingClientRect();
       const winH = window.innerHeight;
-
-      // Progresso conforme o container passa pelo viewport
       const totalDist = rect.height + winH;
       const current = winH - rect.top;
       this.scrollProgress = Math.max(0, Math.min(1, current / totalDist));
-
-      // Deformação da próxima seção ao transbordar
       this.updateOverflowEffect();
     }, { passive: true });
   }
@@ -194,15 +177,15 @@ export class FluidEngineBackground {
     this.ripples.push({
       x, y,
       radius: 0.1,
-      maxRadius: 8.0,
-      strength: strength * 0.6,
+      maxRadius: 10.0,
+      strength: strength * 0.7,
       age: 0,
     });
-    if (this.ripples.length > 20) this.ripples.shift();
+    if (this.ripples.length > 25) this.ripples.shift();
   }
 
   triggerSplash(x, y, force = 1.0) {
-    this.addRipple(x, y, force * 2.0);
+    this.addRipple(x, y, force * 2.2);
   }
 
   spawnDroplet(x, y, vx, vy) {
@@ -215,24 +198,19 @@ export class FluidEngineBackground {
     droplet.y = y + (Math.random() - 0.5) * 0.8;
     droplet.z = 0.5;
 
-    droplet.vx = vx * 0.25 + (Math.random() - 0.5) * 0.3;
-    droplet.vy = -vy * 0.25 + (Math.random() - 0.5) * 0.3;
-    droplet.vz = 0.8 + Math.random() * 0.5;
-
-    droplet.life = 0;
+    droplet.vx = vx * 0.28 + (Math.random() - 0.5) * 0.4;
+    droplet.vy = -vy * 0.28 + (Math.random() - 0.5) * 0.4;
+    droplet.vz = 0.9 + Math.random() * 0.6;
     droplet.detached = false;
   }
 
   updateOverflowEffect() {
-    // Efeito de transbordo pintando a próxima seção de azul suave
-    const nextSection = document.getElementById('modules');
     const overflowOverlay = document.getElementById('fluid-overflow-overlay');
-
     if (overflowOverlay) {
-      if (this.scrollProgress > 0.45) {
-        const factor = Math.min(1, (this.scrollProgress - 0.45) / 0.4);
+      if (this.scrollProgress > 0.4) {
+        const factor = Math.min(1, (this.scrollProgress - 0.4) / 0.45);
         overflowOverlay.style.opacity = factor;
-        overflowOverlay.style.transform = `translateY(${factor * 20}px)`;
+        overflowOverlay.style.transform = `translateY(${factor * 30}px)`;
       } else {
         overflowOverlay.style.opacity = 0;
       }
@@ -240,15 +218,15 @@ export class FluidEngineBackground {
   }
 
   onResize() {
-    if (!this.container || !this.renderer || !this.camera) return;
-    const rect = this.container.getBoundingClientRect();
-    this.width = rect.width;
-    this.height = rect.height;
+    if (!this.section || !this.renderer || !this.camera) return;
+    const rect = this.section.getBoundingClientRect();
+    this.width = rect.width || window.innerWidth;
+    this.height = rect.height || 900;
 
     this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
 
-    this.renderer.setSize(this.width, this.height);
+    this.renderer.setSize(this.width, this.height, false);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   }
 
@@ -258,59 +236,54 @@ export class FluidEngineBackground {
     const delta = this.clock.getDelta();
     const time = this.clock.getElapsedTime();
 
-    // 1. Atualiza as Ondulações (Ripples)
+    // 1. Atualização dos Ripples
     for (let i = this.ripples.length - 1; i >= 0; i--) {
       const r = this.ripples[i];
-      r.radius += delta * 6.5;
+      r.radius += delta * 7.5;
       r.age += delta;
       r.strength *= 0.94;
-      if (r.age > 2.0 || r.strength < 0.01) {
+      if (r.age > 2.2 || r.strength < 0.01) {
         this.ripples.splice(i, 1);
       }
     }
 
-    // 2. Deformação Geométrica da Água (Vertices Displacement)
+    // 2. Deformação Ondulatória e Transbordo
     const pos = this.waterGeo.attributes.position.array;
     const orig = this.originalPos;
     const count = pos.length / 3;
-
-    // Efeito de transbordo (onda descendo no fundo da malha conforme o scroll)
-    const overflowWave = Math.sin(this.scrollProgress * Math.PI) * 1.8;
+    const overflowWave = Math.sin(this.scrollProgress * Math.PI) * 2.2;
 
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
       const vx = orig[i3];
       const vy = orig[i3 + 1];
 
-      // Ondulação oceânica natural base
-      let z = Math.sin(vx * 0.3 + time * 1.8) * Math.cos(vy * 0.3 + time * 1.5) * 0.25;
-      z += Math.sin(vx * 0.6 - time * 2.2) * 0.12;
+      let z = Math.sin(vx * 0.25 + time * 1.6) * Math.cos(vy * 0.25 + time * 1.4) * 0.35;
+      z += Math.sin(vx * 0.5 - time * 2.0) * 0.15;
 
-      // Influência do Mouse Hover (Deformação fluida sob o cursor)
       if (this.mouse.isHovering) {
         const dx = vx - this.mouse.x;
         const dy = vy - this.mouse.y;
         const dist = Math.hypot(dx, dy);
-        if (dist < 6.0) {
-          const falloff = Math.cos((dist / 6.0) * Math.PI * 0.5);
-          z += Math.sin(dist * 2.0 - time * 8.0) * falloff * 0.6;
+        if (dist < 8.0) {
+          const falloff = Math.cos((dist / 8.0) * Math.PI * 0.5);
+          z += Math.sin(dist * 1.8 - time * 7.0) * falloff * 0.8;
         }
       }
 
-      // Influência das Ondulações de Impacto (Ripples)
       for (let j = 0; j < this.ripples.length; j++) {
         const rip = this.ripples[j];
         const dist = Math.hypot(vx - rip.x, vy - rip.y);
         const diff = dist - rip.radius;
-        if (Math.abs(diff) < 1.5) {
-          z += Math.cos(diff * 2.5) * rip.strength * (1.0 - rip.radius / rip.maxRadius);
+        if (Math.abs(diff) < 2.0) {
+          z += Math.cos(diff * 2.0) * rip.strength * (1.0 - rip.radius / rip.maxRadius);
         }
       }
 
-      // Influência do Scroll Overflow na base
-      if (vy < -4.0) {
-        const bottomFactor = (-vy - 4.0) / 6.0;
-        z -= overflowWave * bottomFactor * 0.8;
+      // Transbordo na parte inferior
+      if (vy < -6.0) {
+        const bottomFactor = (-vy - 6.0) / 8.0;
+        z -= overflowWave * bottomFactor * 1.2;
       }
 
       pos[i3 + 2] = z;
@@ -319,43 +292,34 @@ export class FluidEngineBackground {
     this.waterGeo.attributes.position.needsUpdate = true;
     this.waterGeo.computeVertexNormals();
 
-    // 3. Atualização das Gotas Flutuantes e Elásticas
+    // 3. Atualização das Gotas Elásticas
     this.droplets.forEach(d => {
       if (!d.active) return;
 
-      d.life += delta;
-
-      // Movimento balístico com atração elástica de retorno para o mouse/poça
       d.x += d.vx;
       d.y += d.vy;
       d.z += d.vz;
+      d.vz -= delta * 3.8;
 
-      // Gravidade e atração de volta para a poça
-      d.vz -= delta * 3.5;
-
-      // Força de atração suave em direção ao cursor (elástica)
       if (this.mouse.isHovering && !d.detached) {
         const targetDX = this.mouse.x - d.x;
         const targetDY = this.mouse.y - d.y;
-        d.vx += targetDX * delta * 2.5;
-        d.vy += targetDY * delta * 2.5;
+        d.vx += targetDX * delta * 2.8;
+        d.vy += targetDY * delta * 2.8;
 
-        // Se afastar demais, rompe a tensão superficial e descola
-        if (Math.hypot(targetDX, targetDY) > 8.0) {
+        if (Math.hypot(targetDX, targetDY) > 10.0) {
           d.detached = true;
         }
       }
 
-      // Colisão de retorno na poça de água (Z <= 0)
       if (d.z <= 0.1 && d.vz < 0) {
-        this.triggerSplash(d.x, d.y, Math.abs(d.vz) * 0.8);
+        this.triggerSplash(d.x, d.y, Math.abs(d.vz) * 0.85);
         d.active = false;
         d.mesh.visible = false;
       } else {
         d.mesh.position.set(d.x, d.y, d.z);
-        // Deformação em gota de água (esticamento conforme a velocidade)
         const speed = Math.hypot(d.vx, d.vy, d.vz);
-        d.mesh.scale.set(d.size, d.size * (1.0 + speed * 0.8), d.size);
+        d.mesh.scale.set(d.size, d.size * (1.0 + speed * 0.9), d.size);
         d.mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), new THREE.Vector3(d.vx, d.vy, d.vz).normalize());
       }
     });
